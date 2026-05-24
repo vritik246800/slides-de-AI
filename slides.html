@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navegação 2D com IA — Canvas Slides</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:   #050505; --fg:   #F4F4E8; --card: #0F0F11; --panel:#111113;
+  --con:  #12130F; --lime: #D1FF00; --l04:  rgba(209,255,0,.04);
+  --l08:  rgba(209,255,0,.08); --l20: rgba(209,255,0,.20);
+  --flare:#ED4609; --blue: #0099FF; --meta: #9C9C9C;
+  --b:    rgba(156,156,156,.15); --bs:  rgba(156,156,156,.45);
+  --fd:'Space Grotesk',system-ui,sans-serif;
+  --fb:'Inter',system-ui,sans-serif;
+  --fm:'JetBrains Mono','Roboto Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:var(--bg);overflow:hidden;font-family:var(--fb);color:var(--fg)}
+
+/* ── 3-D scene ───────────────────────────────── */
+#scene{position:fixed;inset:0;perspective:1500px;perspective-origin:50% 50%}
+#canvas{
+  position:absolute;left:50%;top:50%;width:0;height:0;
+  transform-style:preserve-3d;
+  transition:transform 850ms cubic-bezier(.33,0,.67,1);
+  will-change:transform;
+}
+
+/* ── Canvas FX overlay ───────────────────────── */
+#fx{position:fixed;inset:0;pointer-events:none;z-index:500}
+
+/* ── Step ────────────────────────────────────── */
+.step{
+  position:absolute;width:1000px;min-height:680px;
+  margin-left:-500px;margin-top:-340px;
+  padding:44px 58px 60px;
+  background:var(--bg);border:1px solid var(--b);
+  transform-style:preserve-3d;transition:opacity .4s;overflow:hidden;
+}
+.step::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(var(--b) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--b) 1px,transparent 1px);
+  background-size:50px 50px;pointer-events:none;z-index:0;
+}
+.step>*{position:relative;z-index:1}
+/* default: dim and non-interactive */
+.step       {opacity:.15;pointer-events:none}
+.step.active{opacity:1;  pointer-events:auto}
+/* overview: all interactive, hoverable via CSS too */
+body.overview .step{pointer-events:auto;cursor:pointer;will-change:transform;transition:opacity .4s,outline .15s,filter .15s}
+body.overview .step:hover{opacity:.85}
+
+/* ── Ghost bg word ───────────────────────────── */
+.bgw{position:absolute;bottom:56px;right:56px;font-family:var(--fd);
+  font-size:clamp(80px,14vw,200px);font-weight:800;text-transform:uppercase;
+  color:var(--l04);letter-spacing:-.05em;pointer-events:none;
+  user-select:none;z-index:0;line-height:1}
+
+/* ── Typography ──────────────────────────────── */
+.ey{font-family:var(--fm);font-size:10px;font-weight:600;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--lime);margin-bottom:16px}
+.dt{font-family:var(--fd);font-size:clamp(36px,5.5vw,76px);font-weight:800;
+    line-height:.95;letter-spacing:-.04em;text-transform:uppercase;
+    color:var(--fg);margin-bottom:18px}
+.dt .ac{color:var(--lime)}
+.st{font-family:var(--fd);font-size:34px;font-weight:800;line-height:1;
+    letter-spacing:-.03em;text-transform:uppercase;color:var(--fg);margin-bottom:20px}
+.lead{font-size:15px;font-weight:400;line-height:1.6;color:var(--meta);max-width:580px}
+
+/* ── Cards ───────────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--b);padding:16px 18px;will-change:transform;transition:border-color .2s,box-shadow .2s}
+.ct{font-family:var(--fd);font-size:13px;font-weight:800;
+    letter-spacing:-.01em;text-transform:uppercase;color:var(--fg);margin-bottom:7px}
+.ct .br{display:block;color:var(--lime);font-family:var(--fm);
+        font-size:9px;font-weight:600;letter-spacing:.15em;margin-bottom:3px}
+
+/* ── Layouts ──────────────────────────────────── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* ── Table ───────────────────────────────────── */
+.tb{width:100%;border-collapse:collapse;font-size:12px}
+.tb th{font-family:var(--fm);font-size:9px;font-weight:600;letter-spacing:.15em;
+       text-transform:uppercase;color:var(--lime);text-align:left;
+       padding:7px 10px;border-bottom:1px solid var(--bs)}
+.tb td{padding:6px 10px;border-bottom:1px solid var(--b);color:var(--fg);line-height:1.4}
+.tb tr:last-child td{border-bottom:none}
+.tb .lm{color:var(--lime);font-family:var(--fm);font-size:11px}
+.tb .fl{color:var(--flare)} .tb .mt{color:var(--meta)}
+
+/* ── Code ────────────────────────────────────── */
+.cb{background:var(--con);border:1px solid var(--b);padding:13px 15px;
+    font-family:var(--fm);font-size:11px;line-height:1.65;
+    color:var(--fg);overflow-x:auto;white-space:pre}
+.k{color:var(--lime)}.cm{color:var(--meta)}.s{color:var(--blue)}
+
+/* ── Formula ─────────────────────────────────── */
+.fm2{background:var(--card);border:1px solid var(--b);
+     border-left:3px solid var(--lime);padding:11px 15px;
+     font-family:var(--fm);font-size:14px;font-weight:600;
+     letter-spacing:.03em;color:var(--lime)}
+
+/* ── Highlight ───────────────────────────────── */
+.hl{background:var(--l08);border:1px solid var(--l20);
+    border-left:3px solid var(--lime);padding:10px 13px;
+    font-size:12px;line-height:1.55;color:var(--fg)}
+.hl strong{color:var(--lime)}
+
+/* ── Pill ────────────────────────────────────── */
+.pill{display:flex;align-items:center;gap:9px;padding:8px 12px;
+      background:var(--card);border:1px solid var(--b);margin-bottom:7px}
+.dot{width:8px;height:8px;background:var(--lime);flex-shrink:0}
+.dot.b{background:var(--blue)}.dot.f{background:var(--flare)}
+
+/* ── Data row ────────────────────────────────── */
+.dr{display:flex;justify-content:space-between;align-items:center;
+    padding:5px 0;border-bottom:1px solid var(--b);font-size:11.5px}
+.dr:last-child{border-bottom:none}
+.dr .k2{color:var(--meta);font-family:var(--fm);font-size:9px;
+        letter-spacing:.12em;text-transform:uppercase}
+.dr .v{color:var(--fg)}
+.dr .lm{color:var(--lime);font-family:var(--fm)}
+.dr .fl{color:var(--flare)}
+
+/* ── Lists ───────────────────────────────────── */
+.sl{list-style:none;counter-reset:s}
+.sl li{counter-increment:s;padding:5px 0 5px 28px;
+       border-bottom:1px solid var(--b);font-size:12px;
+       line-height:1.5;position:relative}
+.sl li:last-child{border-bottom:none}
+.sl li::before{content:'0' counter(s);position:absolute;left:0;
+               color:var(--lime);font-family:var(--fm);font-size:9px;
+               font-weight:600;top:7px;letter-spacing:.10em}
+.bl{list-style:none}
+.bl li{padding:5px 0 5px 16px;border-bottom:1px solid var(--b);
+       font-size:12px;line-height:1.5;position:relative}
+.bl li:last-child{border-bottom:none}
+.bl li::before{content:'//';position:absolute;left:0;color:var(--lime);
+               font-family:var(--fm);font-size:9px;font-weight:600;top:7px}
+
+/* ── Cover meta ──────────────────────────────── */
+.cm2{display:flex;gap:9px;margin-top:24px;flex-wrap:wrap}
+
+/* ── HUD ─────────────────────────────────────── */
+#hud{position:fixed;bottom:0;left:0;right:0;height:52px;
+     background:rgba(5,5,5,.92);border-top:1px solid var(--b);
+     display:flex;align-items:center;justify-content:space-between;
+     padding:0 26px;backdrop-filter:blur(10px);z-index:600;
+     font-family:var(--fm);font-size:10px;font-weight:600;
+     letter-spacing:.15em;text-transform:uppercase;color:var(--meta)}
+#hud .cur{color:var(--lime)}
+#pw{flex:1;max-width:380px;margin:0 20px}
+#pb{height:1px;background:var(--bs)}
+#pf{height:100%;background:var(--lime);width:0;transition:width .5s ease}
+#hint{display:flex;align-items:center}
+#hint .sep{color:rgba(156,156,156,.3);font-size:14px;line-height:1;margin:0 4px}
+#hint .grp{display:flex;align-items:center;gap:5px;white-space:nowrap}
+#hint .lbl{font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--meta);opacity:.55}
+kbd{display:inline-flex;align-items:center;justify-content:center;
+    padding:2px 5px;min-width:18px;height:16px;
+    background:var(--card);border:1px solid rgba(156,156,156,.35);
+    font-family:var(--fm);font-size:8px;font-weight:600;
+    letter-spacing:.05em;color:var(--meta);line-height:1;
+    text-transform:uppercase;cursor:default;}
+
+/* ── Overview badge ─────────────────────────── */
+#ovrbadge{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);
+  font-family:var(--fm);font-size:9px;font-weight:600;
+  letter-spacing:.20em;text-transform:uppercase;
+  color:var(--lime);background:rgba(5,5,5,.85);
+  border:1px solid rgba(209,255,0,.3);padding:5px 14px;
+  opacity:0;transition:opacity .3s;pointer-events:none;z-index:700
+}
+body.overview #ovrbadge{opacity:1}
+#hint-normal{display:flex;align-items:center;gap:10px}
+#hint-overview{display:none;align-items:center;gap:10px}
+body.overview #hint-normal{display:none}
+body.overview #hint-overview{display:flex}
+</style>
+</head>
+<body>
+
+<div id="scene">
+  <div id="canvas">
+
+    <!-- S01 CAPA ─────────────────────────────── -->
+    <div class="step active" id="s1" data-x="0" data-y="0" data-rz="0" data-s="1">
+      <div class="bgw">AI</div>
+      <div style="display:flex;flex-direction:column;justify-content:center;min-height:560px">
+        <div class="ey">[TP] TRABALHO PRÁTICO · INTELIGÊNCIA ARTIFICIAL</div>
+        <div class="dt">NAVEGAÇÃO 2D<br>COM <span class="ac">INTELIGÊNCIA</span><br>ARTIFICIAL</div>
+        <p class="lead">Implementação e comparação de BFS, Greedy e A* num mapa em grelha 2D com interface gráfica Pygame.</p>
+        <div class="cm2">
+          <div class="pill" style="flex:1"><div class="dot"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">BFS — Não Informado</span></div>
+          <div class="pill" style="flex:1"><div class="dot b"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">Greedy — Informado</span></div>
+          <div class="pill" style="flex:1"><div class="dot f"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">A* — Ótimo</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S02 OBJETIVO ────────────────────────── -->
+    <div class="step" id="s2" data-x="1200" data-y="0" data-rz="0" data-s="1">
+      <div class="ey">[01] OBJETIVO DO TRABALHO</div>
+      <div class="st">O que foi implementado</div>
+      <div class="g3" style="margin-bottom:11px">
+        <div class="card"><div class="ct"><span class="br">[BFS]</span>BUSCA EM LARGURA</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Busca <strong style="color:var(--fg)">não informada</strong>. FIFO. Menor nº de passos. Ignora custos de terreno.</p></div>
+        <div class="card"><div class="ct"><span class="br">[GRD]</span>GREEDY BEST-FIRST</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Busca <strong style="color:var(--fg)">informada</strong>. Usa h(n). Rápido mas não garante menor custo total.</p></div>
+        <div class="card"><div class="ct"><span class="br">[A*]</span>A-ESTRELA</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Busca <strong style="color:var(--fg)">informada</strong>. f(n)=g(n)+h(n). Ótimo e completo com h admissível.</p></div>
+      </div>
+      <div class="hl">O programa permite <strong>desenhar o mapa</strong> (obstáculos, terreno difícil, armadilhas, inimigos), definir início/objetivo, executar os algoritmos e observar o caminho e as métricas.</div>
+    </div>
+
+    <!-- S03 PROBLEMA DE BUSCA ───────────────── -->
+    <div class="step" id="s3" data-x="2400" data-y="0" data-rz="0" data-s="1">
+      <div class="ey">[02] FUNDAMENTOS TEÓRICOS</div>
+      <div class="st">Problema de Busca</div>
+      <div class="g2">
+        <div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:12px;line-height:1.55">Forma formal de descrever navegação num espaço de possibilidades com 4 elementos:</p>
+          <table class="tb"><thead><tr><th>Componente</th><th>Significado</th></tr></thead>
+          <tbody>
+            <tr><td class="lm">Estado inicial</td><td>Posição de início do agente</td></tr>
+            <tr><td class="lm">Objetivo</td><td>Posição que o agente quer alcançar</td></tr>
+            <tr><td class="lm">Ações</td><td>Movimentos ortogonais ↑ ↓ ← →</td></tr>
+            <tr><td class="lm">Custo de passo</td><td>Custo de entrar na célula vizinha</td></tr>
+          </tbody></table>
+          <div style="margin-top:11px" class="hl">O algoritmo explora a partir do início, expandindo vizinhos, até encontrar o objetivo.</div>
+        </div>
+        <div class="card">
+          <div class="ct"><span class="br">[ESPAÇO DE ESTADOS]</span>GRELHA 2D</div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Cada célula é um estado. Gera vizinhos adjacentes não bloqueados e repete.</p>
+          <div class="dr"><span class="k2">Dimensão</span><span class="v lm">3×3 até 100×100</span></div>
+          <div class="dr"><span class="k2">Movimentos</span><span class="v">4 direções ortogonais</span></div>
+          <div class="dr"><span class="k2">Estado</span><span class="v lm">State(row, col)</span></div>
+          <div class="dr"><span class="k2">Hashável</span><span class="v">Usado em sets e dicts</span></div>
+          <div class="dr"><span class="k2">Resize</span><span class="v lm">Dinâmico em runtime</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S04 TIPOS DE BUSCA ──────────────────── -->
+    <div class="step" id="s4" data-x="3600" data-y="0" data-rz="2" data-s="1">
+      <div class="ey">[03] TIPOS DE BUSCA</div>
+      <div class="st">Não Informada vs. Informada</div>
+      <div class="g2" style="margin-bottom:11px">
+        <div class="card">
+          <div class="ct"><span class="br">[NÃO INFORMADA]</span>SEM HEURÍSTICA</div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Explora sem saber onde está o objetivo. Sem informação sobre distância restante.</p>
+          <div class="pill"><div class="dot"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">BFS — FIFO</span></div>
+          <div class="pill" style="opacity:.35"><div class="dot"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">DFS — LIFO</span></div>
+          <div style="margin-top:10px;padding:7px 11px;background:var(--panel);border-left:3px solid var(--bs)"><p style="font-family:var(--fm);font-size:9px;color:var(--meta)">Ordenação: FIFO (BFS) · LIFO (DFS)</p></div>
+        </div>
+        <div class="card">
+          <div class="ct"><span class="br">[INFORMADA]</span>COM HEURÍSTICA h(n)</div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Usa h(n) que estima custo de n ao objetivo para guiar a busca eficientemente.</p>
+          <div class="pill"><div class="dot b"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">Greedy — f(n)=h(n)</span></div>
+          <div class="pill"><div class="dot f"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">A* — f(n)=g(n)+h(n)</span></div>
+          <div style="margin-top:10px;padding:7px 11px;background:var(--panel);border-left:3px solid var(--lime)"><p style="font-family:var(--fm);font-size:9px;color:var(--lime)">Heurística: Distância de Manhattan</p></div>
+        </div>
+      </div>
+      <div class="fm2">h(n) = |linha_n − linha_obj| + |coluna_n − coluna_obj|</div>
+    </div>
+
+    <!-- S05 BFS ─────────────────────────────── -->
+    <div class="step" id="s5" data-x="4800" data-y="0" data-rz="0" data-s="1">
+      <div class="ey">[04] ALGORITMO — BUSCA NÃO INFORMADA</div>
+      <div class="st">BFS — Busca em Largura</div>
+      <div class="g2">
+        <div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Explora todos os nós a uma profundidade antes de avançar. Estrutura: <code style="font-family:var(--fm);color:var(--lime)">collections.deque</code> (FIFO).</p>
+          <ol class="sl"><li>Coloca estado inicial numa fila FIFO</li><li>Retira o primeiro estado e expande vizinhos</li><li>Vizinhos não visitados adicionados ao fim</li><li>Repete até objetivo ou fila vazia</li></ol>
+          <div style="margin-top:11px" class="fm2">f(n) = profundidade(n) · FIFO puro</div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:9px">
+            <div class="ct"><span class="br">[PROPRIEDADES]</span>BFS</div>
+            <div class="dr"><span class="k2">Completo</span><span class="v lm">Sim</span></div>
+            <div class="dr"><span class="k2">Ótimo passos</span><span class="v lm">Sim</span></div>
+            <div class="dr"><span class="k2">Ótimo custo</span><span class="v fl">Não — ignora terreno</span></div>
+            <div class="dr"><span class="k2">Memória</span><span class="v fl">Alta — O(b^d)</span></div>
+            <div class="dr"><span class="k2">Heurística</span><span class="v" style="color:var(--meta)">Nenhuma</span></div>
+            <div class="dr"><span class="k2">Ficheiro</span><span class="v lm">algorithms/bfs.py</span></div>
+          </div>
+          <div class="hl"><strong>BFS</strong> garante o caminho mais curto em passos, mas não em custo quando há terrenos com custos diferentes.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S06 GREEDY ──────────────────────────── -->
+    <div class="step" id="s6" data-x="4800" data-y="860" data-rz="0" data-s="1">
+      <div class="ey">[05] ALGORITMO — BUSCA INFORMADA</div>
+      <div class="st">Greedy Best-First</div>
+      <div class="g2">
+        <div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Sempre expande o nó mais próximo do objetivo segundo h(n). Estrutura: <code style="font-family:var(--fm);color:var(--lime)">heapq</code> (min-heap).</p>
+          <ol class="sl"><li>Coloca estado inicial na heap com prioridade h(n)</li><li>Retira sempre o nó com menor h(n)</li><li>Expande vizinhos e insere na heap com h(n)</li><li>Repete até objetivo ou heap vazia</li></ol>
+          <div style="margin-top:11px" class="fm2">f(n) = h(n)</div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:9px">
+            <div class="ct"><span class="br">[PROPRIEDADES]</span>GREEDY</div>
+            <div class="dr"><span class="k2">Velocidade</span><span class="v lm">Alta — poucas expansões</span></div>
+            <div class="dr"><span class="k2">Ótimo custo</span><span class="v fl">Não</span></div>
+            <div class="dr"><span class="k2">Completo</span><span class="v fl">Não sempre</span></div>
+            <div class="dr"><span class="k2">Labirintos</span><span class="v fl">Pode ficar preso</span></div>
+            <div class="dr"><span class="k2">Heurística</span><span class="v lm">Manhattan h(n)</span></div>
+            <div class="dr"><span class="k2">Ficheiro</span><span class="v lm">algorithms/greedy.py</span></div>
+          </div>
+          <div class="hl"><strong>Trade-off:</strong> Muito rápido mas pode encontrar caminhos caros — não considera g(n).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S07 A* ──────────────────────────────── -->
+    <div class="step" id="s7" data-x="3600" data-y="860" data-rz="-2" data-s="1">
+      <div class="ey">[06] ALGORITMO — BUSCA INFORMADA ÓTIMA</div>
+      <div class="st">A* — A-Estrela</div>
+      <div class="g2">
+        <div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Combina o custo real g(n) com a estimativa h(n). Algoritmo de referência — ótimo e completo.</p>
+          <ol class="sl"><li>Coloca estado inicial na heap com f(n)=g(n)+h(n)</li><li>Retira sempre o nó com menor f(n)</li><li>g_novo = g(atual) + custo_passo para cada vizinho</li><li>Se g_novo melhora custo conhecido, atualiza</li></ol>
+          <div style="margin-top:11px" class="fm2">f(n) = g(n) + h(n)</div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:9px">
+            <div class="ct"><span class="br">[SÍMBOLOS]</span>A*</div>
+            <div class="dr"><span class="k2">g(n)</span><span class="v" style="font-size:11px">Custo real desde início até n</span></div>
+            <div class="dr"><span class="k2">h(n)</span><span class="v" style="font-size:11px">Estimativa heurística de n ao obj.</span></div>
+            <div class="dr"><span class="k2">f(n)</span><span class="v lm" style="font-size:11px">Custo total estimado</span></div>
+          </div>
+          <div class="card">
+            <div class="ct"><span class="br">[PROPRIEDADES]</span>A*</div>
+            <div class="dr"><span class="k2">Completo</span><span class="v lm">Sim</span></div>
+            <div class="dr"><span class="k2">Ótimo custo</span><span class="v lm">Sim (h admissível)</span></div>
+            <div class="dr"><span class="k2">Eficiência</span><span class="v lm">Melhor que BFS</span></div>
+            <div class="dr"><span class="k2">Ficheiro</span><span class="v lm">algorithms/astar.py</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S08 MODELAÇÃO ───────────────────────── -->
+    <div class="step" id="s8" data-x="2400" data-y="860" data-rz="0" data-s="1">
+      <div class="ey">[07] MODELAÇÃO FORMAL</div>
+      <div class="st">Tipos de Célula e Custos</div>
+      <div class="g2">
+        <div>
+          <table class="tb" style="margin-bottom:11px">
+            <thead><tr><th>Tipo</th><th>Constante</th><th>Int</th><th>Custo</th></tr></thead>
+            <tbody>
+              <tr><td>Livre</td><td class="lm">FREE</td><td class="mt">0</td><td class="lm">1</td></tr>
+              <tr><td>Obstáculo</td><td class="lm">OBSTACLE</td><td class="mt">1</td><td class="fl">∞</td></tr>
+              <tr><td>Armadilha</td><td class="lm">TRAP</td><td class="mt">2</td><td class="lm">5</td></tr>
+              <tr><td>Difícil</td><td class="lm">DIFFICULT</td><td class="mt">3</td><td class="lm">3</td></tr>
+              <tr><td>Inimigo</td><td class="lm">ENEMY</td><td class="mt">4</td><td>1 <span style="color:var(--flare)">†</span></td></tr>
+            </tbody>
+          </table>
+          <p style="font-family:var(--fm);font-size:9px;color:var(--meta)">† Custo normal algoritmicamente; fatal na animação.</p>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:9px">
+            <div class="ct"><span class="br">[CLASSES]</span>MODEL/</div>
+            <div class="dr"><span class="k2">state.py</span><span class="v lm">State(row,col) hashável</span></div>
+            <div class="dr"><span class="k2">grid.py</span><span class="v">Matriz 2D + resize</span></div>
+            <div class="dr"><span class="k2">problem.py</span><span class="v lm">actions·result·step_cost</span></div>
+          </div>
+          <div class="hl"><strong>Two-pass:</strong> 1ª tentativa com <code style="font-family:var(--fm);color:var(--lime)">avoid_enemies=True</code>. Sem solução → retenta com False — ativa "capturado" na animação.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S09 CONTRATO ────────────────────────── -->
+    <div class="step" id="s9" data-x="1200" data-y="860" data-rz="0" data-s="1">
+      <div class="ey">[08] CONTRATO DOS ALGORITMOS</div>
+      <div class="st">Formato de Saída</div>
+      <div class="g2">
+        <div class="cb"><span class="k">def</span> bfs(problem) -> <span class="k">dict</span>:
+    <span class="k">return</span> {
+        <span class="s">"path"</span>:     list | <span class="k">None</span>,
+        <span class="cm"># caminho ou None se sem solução</span>
+
+        <span class="s">"explored"</span>: list[tuple[int,int]],
+        <span class="cm"># ordem de expansão (animação)</span>
+
+        <span class="s">"expanded"</span>: int,
+        <span class="cm"># nós expandidos</span>
+
+        <span class="s">"cost"</span>:     float | <span class="k">None</span>,
+        <span class="cm"># custo total do terreno</span>
+
+        <span class="s">"time"</span>:     float,
+        <span class="cm"># segundos (perf_counter)</span>
+    }
+<span class="cm"># App adiciona depois:</span>
+<span class="cm">#  "travel_time_s" — estimativa animação</span></div>
+        <div>
+          <div class="card" style="margin-bottom:9px">
+            <div class="ct"><span class="br">[MÉTRICAS]</span>TRACKER.PY</div>
+            <div class="dr"><span class="k2">Custo total</span><span class="v">Soma dos custos de terreno</span></div>
+            <div class="dr"><span class="k2">Nós expandidos</span><span class="v">Células processadas</span></div>
+            <div class="dr"><span class="k2">Passos</span><span class="v lm">len(path)</span></div>
+            <div class="dr"><span class="k2">Tempo (ms)</span><span class="v">Exec. do algoritmo</span></div>
+            <div class="dr"><span class="k2">Tempo viagem</span><span class="v">Estimativa animação</span></div>
+          </div>
+          <div class="hl">Melhor valor de cada coluna destacado a <strong>lime</strong> na tabela da tab "Análise".</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S10 ARQUITETURA ─────────────────────── -->
+    <div class="step" id="s10" data-x="0" data-y="860" data-rz="0" data-s="1">
+      <div class="ey">[09] ARQUITETURA DO PROJETO</div>
+      <div class="st">Estrutura de Ficheiros</div>
+      <div class="g2">
+        <div class="cb">projeto_ia/
+├── <span class="k">main.py</span>        <span class="cm"># GUI ou --test</span>
+│
+├── <span class="k">model/</span>
+│   ├── grid.py    <span class="cm"># Grid 2D, tipos, custos</span>
+│   ├── state.py   <span class="cm"># State(row,col) hashável</span>
+│   └── problem.py <span class="cm"># actions·result·cost</span>
+│
+├── <span class="k">algorithms/</span>
+│   ├── bfs.py     <span class="cm"># Busca em Largura</span>
+│   ├── greedy.py  <span class="cm"># Greedy h(n)</span>
+│   ├── astar.py   <span class="cm"># A* g(n)+h(n)</span>
+│   └── heuristics.py
+│
+├── <span class="k">metrics/</span>
+│   └── tracker.py
+│
+└── <span class="k">ui/</span>
+    ├── app.py     <span class="cm"># loop·eventos·animação</span>
+    ├── grid_view.py
+    ├── controls.py
+    └── icons.py   <span class="cm"># vetorial, sem imgs</span></div>
+        <div>
+          <div class="card" style="margin-bottom:9px">
+            <div class="ct"><span class="br">[SEPARAÇÃO]</span>RESPONSABILIDADES</div>
+            <ul class="bl">
+              <li><strong style="color:var(--lime)">model/</strong> — puro Python, sem Pygame</li>
+              <li><strong style="color:var(--lime)">algorithms/</strong> — recebem Problem, devolvem dict</li>
+              <li><strong style="color:var(--lime)">ui/</strong> — usa modelo sem conhecer detalhes</li>
+              <li><strong style="color:var(--lime)">metrics/</strong> — funciona terminal e GUI</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="ct"><span class="br">[EXECUÇÃO]</span></div>
+            <div class="dr"><span class="k2">GUI</span><span class="v lm">python main.py</span></div>
+            <div class="dr"><span class="k2">Terminal</span><span class="v lm">python main.py --test</span></div>
+            <div class="dr"><span class="k2">Dep.</span><span class="v">pip install pygame</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S11 INTERFACE ───────────────────────── -->
+    <div class="step" id="s11" data-x="0" data-y="1720" data-rz="0" data-s="1">
+      <div class="ey">[10] INTERFACE GRÁFICA — PYGAME</div>
+      <div class="st">Layout e Funcionalidades</div>
+      <div class="g2">
+        <div>
+          <div class="cb" style="margin-bottom:11px;font-size:10.5px">┌─────────────────────────────────────┐
+│ Barra menus (Ficheiro | Ajuda)      │
+│ Título: Navegação de Personagem...  │
+├──────────────┬──────────────────────┤
+│Grelha│Análise     Painel controlo   │
+│                                     │
+│  [Área 2D]     [Botões + Tabela]    │
+│  Separador arrastável ↔             │
+└─────────────────────────────────────┘</div>
+          <div class="card">
+            <div class="ct"><span class="br">[ATALHOS]</span>TECLADO</div>
+            <div class="dr"><span class="k2">Ctrl+S</span><span class="v">Guardar mapa JSON</span></div>
+            <div class="dr"><span class="k2">Ctrl+O</span><span class="v">Carregar mapa JSON</span></div>
+            <div class="dr"><span class="k2">Esc</span><span class="v">Fechar menus / sair</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:9px">
+            <div class="ct"><span class="br">[MODOS DE EDIÇÃO]</span>TAB GRELHA</div>
+            <div class="dr"><span class="k2">S / G</span><span class="v lm">Início / Objetivo</span></div>
+            <div class="dr"><span class="k2">Obstáculo</span><span class="v fl">Intransponível</span></div>
+            <div class="dr"><span class="k2">Difícil</span><span class="v">Custo 3</span></div>
+            <div class="dr"><span class="k2">Armadilha</span><span class="v">Custo 5</span></div>
+            <div class="dr"><span class="k2">Inimigo</span><span class="v fl">Fatal na animação</span></div>
+          </div>
+          <div class="card">
+            <div class="ct"><span class="br">[TAB]</span>ANÁLISE</div>
+            <p style="font-size:12px;color:var(--meta);line-height:1.55">Tabela comparativa + gráficos de barras horizontais. Melhor valor marcado com ★ em lime.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S12 COMPARAÇÃO ──────────────────────── -->
+    <div class="step" id="s12" data-x="1200" data-y="1720" data-rz="3" data-s="1">
+      <div class="ey">[11] ANÁLISE COMPARATIVA</div>
+      <div class="st">Comportamento por Cenário</div>
+      <table class="tb" style="margin-bottom:11px">
+        <thead><tr><th>Cenário</th><th>BFS</th><th>Greedy</th><th>A*</th></tr></thead>
+        <tbody>
+          <tr><td>Mapa simples</td><td>Ótimo em passos</td><td>Rápido</td><td class="lm">Ótimo em custo</td></tr>
+          <tr><td>Terrenos variados</td><td class="fl">Ignora custos</td><td class="fl">Pode errar</td><td class="lm">Escolhe mais barato</td></tr>
+          <tr><td>Labirinto</td><td>Explora muito</td><td class="fl">Pode falhar</td><td class="lm">Eficiente e correto</td></tr>
+          <tr><td>Sem solução</td><td class="fl">Expande tudo</td><td>Expande menos</td><td class="lm">Mais eficiente</td></tr>
+        </tbody>
+      </table>
+      <div class="g3">
+        <div class="hl"><strong>BFS vs A*:</strong><br>BFS garante menos passos. A* garante menor custo.</div>
+        <div class="hl"><strong>Greedy vs A*:</strong><br>Greedy mais rápido mas não ótimo. A* encontra sempre o menor custo.</div>
+        <div class="hl"><strong>Nós expandidos:</strong><br>BFS expande mais nós que A* por não ter heurística.</div>
+      </div>
+    </div>
+
+    <!-- S13 CASOS DE TESTE ──────────────────── -->
+    <div class="step" id="s13" data-x="2400" data-y="1720" data-rz="0" data-s="1">
+      <div class="ey">[12] CASOS DE TESTE — MODO TERMINAL</div>
+      <div class="st">python main.py --test</div>
+      <table class="tb" style="margin-bottom:11px">
+        <thead><tr><th>Caso</th><th>Descrição</th><th>O que testa</th></tr></thead>
+        <tbody>
+          <tr><td class="lm">01</td><td>5×5 sem obstáculos, (0,0)→(4,4)</td><td>Caso base — todos encontram caminho</td></tr>
+          <tr><td class="lm">02</td><td>10×10 com obstáculos, (0,0)→(9,9)</td><td>Contornar obstáculos</td></tr>
+          <tr><td class="fl">03</td><td>5×5 coluna completamente bloqueada</td><td>Sem solução — todos retornam None</td></tr>
+          <tr><td class="lm">04</td><td>8×8 terreno difícil + armadilha</td><td>Impacto dos custos de terreno</td></tr>
+        </tbody>
+      </table>
+      <div class="g2">
+        <div class="hl"><strong>Terminal:</strong> Tabela ASCII por caso com custo, nós expandidos, passos e tempo.</div>
+        <div class="hl"><strong>GUI:</strong> Clicar "Executar Todos" → tab <strong>"Análise"</strong> para gráficos e tabela.</div>
+      </div>
+    </div>
+
+    <!-- S14 TECNOLOGIAS ─────────────────────── -->
+    <div class="step" id="s14" data-x="3600" data-y="1720" data-rz="0" data-s="1">
+      <div class="ey">[13] TECNOLOGIAS E DEPENDÊNCIAS</div>
+      <div class="st">Stack do Projeto</div>
+      <div class="g2">
+        <table class="tb">
+          <thead><tr><th>Tecnologia</th><th>Uso</th></tr></thead>
+          <tbody>
+            <tr><td class="lm">Python 3.10+</td><td>Linguagem principal</td></tr>
+            <tr><td class="lm">Pygame</td><td>Janela gráfica, renderização</td></tr>
+            <tr><td class="lm">collections.deque</td><td>Fila FIFO para BFS</td></tr>
+            <tr><td class="lm">heapq</td><td>Fila de prioridade Greedy/A*</td></tr>
+            <tr><td class="lm">json</td><td>Serialização dos mapas</td></tr>
+            <tr><td class="lm">tkinter (subprocess)</td><td>Diálogo ficheiro macOS</td></tr>
+            <tr><td class="lm">time.perf_counter</td><td>Medição precisa do tempo</td></tr>
+          </tbody>
+        </table>
+        <div>
+          <div class="card" style="margin-bottom:9px">
+            <div class="ct"><span class="br">[PALETA]</span>AIOX DARK COCKPIT</div>
+            <div class="dr"><span class="k2">Canvas</span><span class="v lm">#050505</span></div>
+            <div class="dr"><span class="k2">Surface</span><span class="v">#0F0F11</span></div>
+            <div class="dr"><span class="k2">Cream fg</span><span class="v">#F4F4E8</span></div>
+            <div class="dr"><span class="k2">Lime accent</span><span class="v lm">#D1FF00</span></div>
+            <div class="dr"><span class="k2">Flare error</span><span class="v fl">#ED4609</span></div>
+          </div>
+          <div class="hl"><strong>Zero dependências de IA externa.</strong> Todos os algoritmos implementados manualmente em Python puro.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S15 RESUMO ──────────────────────────── -->
+    <div class="step" id="s15" data-x="1800" data-y="2720" data-rz="0" data-s="1.06">
+      <div class="bgw">FIM</div>
+      <div class="ey">[14] RESUMO PARA O RELATÓRIO</div>
+      <div class="st">Estrutura do Relatório Académico</div>
+      <div class="g3">
+        <div class="card"><div class="ct"><span class="br">[01]</span>INTRODUÇÃO</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Objetivo do trabalho, algoritmos escolhidos e motivação.</p></div>
+        <div class="card"><div class="ct"><span class="br">[02]</span>FUNDAMENTAÇÃO</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Busca em espaço de estados, informada vs. não informada, pseudocódigo.</p></div>
+        <div class="card"><div class="ct"><span class="br">[03]</span>MODELAÇÃO</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Grelha, estados hashável, tipos de célula e custos de terreno.</p></div>
+        <div class="card"><div class="ct"><span class="br">[04]</span>IMPLEMENTAÇÃO</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Arquitetura, separação modelo/UI, contrato dos algoritmos, two-pass.</p></div>
+        <div class="card"><div class="ct"><span class="br">[05]</span>RESULTADOS</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Tabela de métricas dos 4 casos de teste e análise dos gráficos.</p></div>
+        <div class="card"><div class="ct"><span class="br">[06]</span>CONCLUSÃO</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Melhor algoritmo para cada cenário — tradeoffs BFS vs Greedy vs A*.</p></div>
+      </div>
+    </div>
+
+  </div><!-- /#canvas -->
+</div><!-- /#scene -->
+
+<!-- HUD -->
+<div id="hud">
+  <span>[<span class="cur" id="hcur">01</span>&nbsp;/&nbsp;<span id="htot">15</span>]</span>
+  <div id="pw"><div id="pb"><div id="pf"></div></div></div>
+  <div id="hint">
+    <!-- modo normal -->
+    <div id="hint-normal">
+      <div class="grp"><kbd>←</kbd><kbd>→</kbd><span class="lbl">Navegar</span></div>
+      <span class="sep">|</span>
+      <div class="grp"><kbd>↑</kbd><kbd>↓</kbd><span class="lbl">Também navega</span></div>
+      <span class="sep">|</span>
+      <div class="grp"><kbd>Space</kbd><kbd>PgDn</kbd><span class="lbl">Avançar</span></div>
+      <span class="sep">|</span>
+      <div class="grp"><kbd>Home</kbd><kbd>End</kbd><span class="lbl">1º / Último</span></div>
+      <span class="sep">|</span>
+      <div class="grp"><kbd>Tab</kbd><span class="lbl" style="color:var(--lime);opacity:1">Visão Geral</span></div>
+    </div>
+    <!-- modo visão geral -->
+    <div id="hint-overview">
+      <div class="grp"><span class="lbl" style="color:var(--lime);opacity:1">VISÃO GERAL</span></div>
+      <span class="sep">|</span>
+      <div class="grp"><span class="lbl">Hover</span><span class="lbl" style="color:var(--fg);opacity:.7">→ aura</span></div>
+      <span class="sep">|</span>
+      <div class="grp"><span class="lbl">Clique no slide</span><span class="lbl" style="color:var(--fg);opacity:.7">→ navegar</span></div>
+      <span class="sep">|</span>
+      <div class="grp"><kbd>Tab</kbd><kbd>Esc</kbd><span class="lbl">Fechar vista</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Overview badge -->
+<div id="ovrbadge">[ TAB / ESC — SAIR DA VISÃO GERAL ]</div>
+
+<!-- ═══ HTML Canvas — efeitos visuais ═══ -->
+<canvas id="fx"></canvas>
+
+<script>
+(function () {
+  /* ── Config ───────────────────────────────── */
+  const W = 1000, H = 680, PERSP = 1500, TOTAL = 15;
+  let cur = 0, inOverview = false, hovIdx = -1;
+
+  const cvs    = document.getElementById('canvas');
+  const fx     = document.getElementById('fx');
+  const ctx    = fx.getContext('2d');
+  const steps  = [...document.querySelectorAll('.step')];
+
+  /* per-step glow intensity (0→1, lerped each frame) */
+  const aura = new Float32Array(TOTAL);
+
+  /* ── Resize FX canvas to match viewport ───── */
+  function resizeFX () {
+    fx.width  = window.innerWidth;
+    fx.height = window.innerHeight;
+  }
+  resizeFX();
+
+  /* ── Position every step in 3-D canvas space ─ */
+  steps.forEach(el => {
+    const x  = +(el.dataset.x  || 0);
+    const y  = +(el.dataset.y  || 0);
+    const rz = +(el.dataset.rz || 0);
+    const s  = +(el.dataset.s  || 1);
+    el.style.transform =
+      `translate3d(${x}px,${y}px,0) rotateZ(${rz}deg) scale(${s})`;
+  });
+
+  /* ── Compute viewport→step scale ─────────── */
+  function winScale (s) {
+    return Math.min(window.innerWidth / W,
+                    (window.innerHeight - 52) / H) / (s || 1);
+  }
+
+  /* ══ CANVAS DRAW HELPERS ══════════════════ */
+
+  /* Corner brackets — drawn in normal presentation mode */
+  function drawCorners (r, alpha) {
+    const len = Math.min(r.width, r.height) * 0.07;
+    ctx.save();
+    ctx.strokeStyle = `rgba(209,255,0,${alpha})`;
+    ctx.lineWidth   = 1.5;
+    ctx.shadowColor = `rgba(209,255,0,${alpha * .7})`;
+    ctx.shadowBlur  = 14;
+    ctx.lineCap     = 'square';
+    const {left:l, top:t, right:r2, bottom:b} = r;
+    // TL
+    ctx.beginPath(); ctx.moveTo(l+len,t); ctx.lineTo(l,t); ctx.lineTo(l,t+len); ctx.stroke();
+    // TR
+    ctx.beginPath(); ctx.moveTo(r2-len,t); ctx.lineTo(r2,t); ctx.lineTo(r2,t+len); ctx.stroke();
+    // BL
+    ctx.beginPath(); ctx.moveTo(l+len,b); ctx.lineTo(l,b); ctx.lineTo(l,b-len); ctx.stroke();
+    // BR
+    ctx.beginPath(); ctx.moveTo(r2-len,b); ctx.lineTo(r2,b); ctx.lineTo(r2,b-len); ctx.stroke();
+    ctx.restore();
+  }
+
+  /* Aura glow — drawn in overview mode on hover */
+  function drawAura (r, alpha, idx) {
+    const t   = performance.now() / 1000;
+    const pulse = .65 + .35 * Math.sin(t * 2.8);
+    const cx  = r.left + r.width  / 2;
+    const cy  = r.top  + r.height / 2;
+    const rad = Math.max(r.width, r.height) * .78;
+
+    /* — radial gradient bloom — */
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
+    g.addColorStop(0,   `rgba(209,255,0,${alpha * .20 * pulse})`);
+    g.addColorStop(.35, `rgba(209,255,0,${alpha * .09})`);
+    g.addColorStop(.7,  `rgba(209,255,0,${alpha * .03})`);
+    g.addColorStop(1,   'rgba(209,255,0,0)');
+    const pad = rad * .55;
+    ctx.fillStyle = g;
+    ctx.fillRect(r.left - pad, r.top - pad, r.width + pad*2, r.height + pad*2);
+
+    /* — glowing border — */
+    ctx.save();
+    ctx.shadowColor = `rgba(209,255,0,${alpha * pulse})`;
+    ctx.shadowBlur  = 22 * alpha;
+    ctx.strokeStyle = `rgba(209,255,0,${alpha * .92})`;
+    ctx.lineWidth   = 1.2;
+    ctx.strokeRect(r.left, r.top, r.width, r.height);
+    ctx.restore();
+
+    /* — HUD label above slide — */
+    if (alpha > .25) {
+      const fs = Math.max(9, Math.round(r.width * .024));
+      ctx.save();
+      ctx.globalAlpha = Math.min(alpha * 1.8, 1);
+      ctx.font        = `600 ${fs}px 'JetBrains Mono', monospace`;
+      ctx.fillStyle   = '#D1FF00';
+      ctx.textAlign   = 'center';
+      ctx.shadowColor = 'rgba(209,255,0,.7)';
+      ctx.shadowBlur  = 8;
+      ctx.fillText(`[${String(idx + 1).padStart(2, '0')}]`, cx, r.top - 6);
+      ctx.restore();
+    }
+  }
+
+  /* ══ MAIN RAF LOOP ════════════════════════ */
+  function draw () {
+    ctx.clearRect(0, 0, fx.width, fx.height);
+    const t = performance.now() / 1000;
+
+    if (inOverview) {
+      /* ── ambient lime outline on ALL slides ── */
+      steps.forEach((el, i) => {
+        const r = el.getBoundingClientRect();
+        if (r.width < 2) return;
+        const amb = .05 + .02 * Math.sin(t * .6 + i * .45);
+        ctx.strokeStyle = `rgba(209,255,0,${amb})`;
+        ctx.lineWidth   = .5;
+        ctx.strokeRect(r.left, r.top, r.width, r.height);
+      });
+
+      /* ── per-step aura (lerp toward target) ── */
+      steps.forEach((el, i) => {
+        const target = (i === hovIdx) ? 1 : 0;
+        aura[i] += (target - aura[i]) * .075; /* smooth 0.075 lerp factor */
+        if (aura[i] < .008) return;
+        drawAura(el.getBoundingClientRect(), aura[i], i);
+      });
+
+    } else {
+      /* ── normal mode: breathing glow + corners on active slide ── */
+      const el   = steps[cur];
+      const r    = el.getBoundingClientRect();
+      const pulse = .4 + .25 * Math.sin(t * 1.3);
+
+      /* subtle bg radial glow */
+      const cx  = r.left + r.width  / 2;
+      const cy  = r.top  + r.height / 2;
+      const rad = Math.max(r.width, r.height) * .65;
+      const bg  = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
+      bg.addColorStop(0, `rgba(209,255,0,${pulse * .05})`);
+      bg.addColorStop(1, 'rgba(209,255,0,0)');
+      ctx.fillStyle = bg;
+      ctx.fillRect(r.left - 90, r.top - 90, r.width + 180, r.height + 180);
+
+      /* corner brackets */
+      drawCorners(r, pulse * .75);
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  /* ══ NAVIGATION ════════════════════════════ */
+  function goTo (idx, animate) {
+    if (idx < 0 || idx >= TOTAL) return;
+    inOverview = false;
+    document.body.classList.remove('overview');
+    hovIdx = -1;
+
+    cvs.style.transition = animate === false
+      ? 'none'
+      : 'transform 850ms cubic-bezier(.33,0,.67,1)';
+
+    const el = steps[idx];
+    const x  = +(el.dataset.x  || 0);
+    const y  = +(el.dataset.y  || 0);
+    const rz = +(el.dataset.rz || 0);
+    const s  = +(el.dataset.s  || 1);
+    const sc = winScale(s);
+
+    cvs.style.transform =
+      `perspective(${PERSP}px) scale(${sc}) rotateZ(${-rz}deg) translate3d(${-x}px,${-y}px,0)`;
+
+    steps[cur].classList.remove('active');
+    cur = idx;
+    steps[cur].classList.add('active');
+    updateHUD();
+  }
+
+  function enterOverview () {
+    inOverview = true;
+    document.body.classList.add('overview');
+    cvs.style.transition = 'transform 850ms cubic-bezier(.33,0,.67,1)';
+    /* fit the entire 5×3 grid: x spans 0..5800, y spans 0..3400 */
+    const sc = Math.min(
+      window.innerWidth         / 6600,
+      (window.innerHeight - 52) / 4200
+    );
+    cvs.style.transform =
+      `perspective(${PERSP}px) scale(${sc}) translate3d(-2400px,-1300px,0)`;
+  }
+
+  function toggleOverview () {
+    if (inOverview) goTo(cur, true); else enterOverview();
+  }
+
+  /* ── HUD ─────────────────────────────────── */
+  function updateHUD () {
+    document.getElementById('hcur').textContent = String(cur + 1).padStart(2, '0');
+    document.getElementById('pf').style.width   = (cur / (TOTAL - 1) * 100) + '%';
+  }
+
+  /* ── Keyboard ────────────────────────────── */
+  document.addEventListener('keydown', e => {
+    /* in overview: any nav key exits */
+    if (inOverview) {
+      if (['Tab','Escape','o','O',' '].includes(e.key)) {
+        e.preventDefault(); goTo(cur, true);
+      }
+      return;
+    }
+    switch (e.key) {
+      case 'Tab':       e.preventDefault(); enterOverview(); break;
+      case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+        e.preventDefault(); goTo(cur < TOTAL-1 ? cur+1 : 0, true); break;
+      case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+        e.preventDefault(); goTo(cur > 0 ? cur-1 : TOTAL-1, true); break;
+      case 'Home':    goTo(0,       true); break;
+      case 'End':     goTo(TOTAL-1, true); break;
+      case 'Escape': case 'o': case 'O': toggleOverview(); break;
+    }
+  });
+
+  /* ── Hover tracking (for aura) ───────────── */
+  steps.forEach((el, i) => {
+    el.addEventListener('mouseenter', () => { if (inOverview) hovIdx = i; });
+    el.addEventListener('mouseleave', () => { if (inOverview && hovIdx === i) hovIdx = -1; });
+    /* click in overview → navigate to that slide */
+    el.addEventListener('click', () => { if (inOverview) goTo(i, true); });
+  });
+
+  /* ── Touch swipe ─────────────────────────── */
+  let tx = 0;
+  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend',   e => {
+    if (inOverview) return;
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 50)
+      goTo(dx < 0 ? (cur < TOTAL-1 ? cur+1 : 0)
+                  : (cur > 0       ? cur-1  : TOTAL-1), true);
+  }, {passive:true});
+
+  /* ── Resize ──────────────────────────────── */
+  window.addEventListener('resize', () => {
+    resizeFX();
+    if (!inOverview) goTo(cur, false);
+  });
+
+  /* ── Visibility (pause RAF when tab hidden) ─ */
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) requestAnimationFrame(draw);
+  });
+
+  /* ── Init ────────────────────────────────── */
+  document.getElementById('htot').textContent = TOTAL;
+  goTo(0, false);
+  requestAnimationFrame(draw); /* start canvas loop */
+})();
+</script>
+
+<script>
+/* ── 3D magnetic tilt — cards & tables ─────── */
+(function(){
+  const LERP=.13, MC=12, MT=6;
+  const items=[];
+
+  function make(el,max,glare){
+    const d={el,rx:0,ry:0,tx:0,ty:0,on:false,g:null};
+    if(glare){
+      d.g=document.createElement('div');
+      d.g.style.cssText='position:absolute;inset:0;pointer-events:none;z-index:20;opacity:0;transition:opacity .3s';
+      if(getComputedStyle(el).position==='static') el.style.position='relative';
+      el.style.overflow='hidden';
+      el.appendChild(d.g);
+    }
+    el.addEventListener('mouseenter',()=>{
+      d.on=true;
+      el.style.borderColor='rgba(209,255,0,.28)';
+      el.style.boxShadow='0 0 0 1px rgba(209,255,0,.10),0 10px 32px rgba(0,0,0,.55)';
+      el.style.zIndex='8';
+    });
+    el.addEventListener('mouseleave',()=>{
+      d.on=false; d.tx=0; d.ty=0;
+      if(d.g) d.g.style.opacity='0';
+      el.style.borderColor=''; el.style.boxShadow=''; el.style.zIndex='';
+    });
+    el.addEventListener('mousemove',e=>{
+      const r=el.getBoundingClientRect();
+      const nx=(e.clientX-r.left-r.width*.5)/(r.width*.5);
+      const ny=(e.clientY-r.top-r.height*.5)/(r.height*.5);
+      d.tx=-ny*max; d.ty=nx*max;
+      if(d.g){
+        const gx=((e.clientX-r.left)/r.width*100).toFixed(1);
+        const gy=((e.clientY-r.top)/r.height*100).toFixed(1);
+        d.g.style.background=`radial-gradient(circle at ${gx}% ${gy}%,rgba(209,255,0,.09) 0%,transparent 65%)`;
+        d.g.style.opacity='1';
+      }
+    });
+    items.push(d);
+  }
+
+  document.querySelectorAll('.card').forEach(el=>make(el,MC,true));
+  document.querySelectorAll('.tb').forEach(el=>{if(!el.closest('.card'))make(el,MT,false);});
+
+  (function tick(){
+    items.forEach(d=>{
+      d.rx+=(d.tx-d.rx)*LERP;
+      d.ry+=(d.ty-d.ry)*LERP;
+      d.el.style.transform=`perspective(700px) rotateX(${d.rx.toFixed(3)}deg) rotateY(${d.ry.toFixed(3)}deg)`;
+    });
+    requestAnimationFrame(tick);
+  })();
+})();
+</script>
+
+<script>
+/* ── 3D tilt para .step — visão geral ───────── */
+(function(){
+  const LERP_S=0.11, MAX_S=10;
+  const stepItems=[];
+
+  function makeStep(el){
+    const base=el.style.transform;
+    const d={el,base,rx:0,ry:0,tx:0,ty:0};
+
+    const g=document.createElement('div');
+    g.style.cssText='position:absolute;inset:0;pointer-events:none;z-index:50;opacity:0;transition:opacity .25s';
+    el.appendChild(g);
+
+    el.addEventListener('mousemove',e=>{
+      if(!document.body.classList.contains('overview')) return;
+      const r=el.getBoundingClientRect();
+      const nx=(e.clientX-r.left-r.width*.5)/(r.width*.5);
+      const ny=(e.clientY-r.top-r.height*.5)/(r.height*.5);
+      d.tx=-ny*MAX_S; d.ty=nx*MAX_S;
+      const gx=((e.clientX-r.left)/r.width*100).toFixed(1);
+      const gy=((e.clientY-r.top)/r.height*100).toFixed(1);
+      g.style.background=`radial-gradient(circle at ${gx}% ${gy}%,rgba(209,255,0,.06) 0%,transparent 60%)`;
+      g.style.opacity='1';
+    });
+
+    el.addEventListener('mouseenter',()=>{
+      if(!document.body.classList.contains('overview')) return;
+      el.style.outline='1px solid rgba(209,255,0,.22)';
+      el.style.filter='drop-shadow(0 0 20px rgba(209,255,0,.18))';
+    });
+
+    el.addEventListener('mouseleave',()=>{
+      d.tx=0; d.ty=0;
+      g.style.opacity='0';
+      el.style.outline=''; el.style.filter='';
+    });
+
+    stepItems.push(d);
+  }
+
+  document.querySelectorAll('.step').forEach(el=>makeStep(el));
+
+  (function tick(){
+    stepItems.forEach(d=>{
+      d.rx+=(d.tx-d.rx)*LERP_S;
+      d.ry+=(d.ty-d.ry)*LERP_S;
+      d.el.style.transform=d.base+' perspective(900px) rotateX('+d.rx.toFixed(3)+'deg) rotateY('+d.ry.toFixed(3)+'deg)';
+    });
+    requestAnimationFrame(tick);
+  })();
+
+  new MutationObserver(()=>{
+    if(!document.body.classList.contains('overview')){
+      stepItems.forEach(d=>{
+        d.tx=0; d.ty=0;
+        d.el.style.outline=''; d.el.style.filter='';
+      });
+    }
+  }).observe(document.body,{attributes:true,attributeFilter:['class']});
+})();
+</script>
+</body>
+</html>
