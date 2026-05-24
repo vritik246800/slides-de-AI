@@ -935,17 +935,45 @@ body.overview #hint-overview{display:flex}
 
 <script>
 /* ── 3D tilt para .step — visão geral ───────── */
+/* Abordagem: wrapper interno isola a perspetiva do tilt
+   sem tocar no transform de posicionamento do step.
+   O step nunca muda — getBoundingClientRect() fica alinhado
+   com o outline desenhado pelo canvas. */
 (function(){
   const LERP_S=0.11, MAX_S=10;
   const stepItems=[];
 
   function makeStep(el){
-    const base=el.style.transform;
-    const d={el,base,rx:0,ry:0,tx:0,ty:0};
+    /* Lê padding do step antes de o remover */
+    const cs=getComputedStyle(el);
+    const pt=cs.paddingTop, pr=cs.paddingRight,
+          pb=cs.paddingBottom, pl=cs.paddingLeft;
 
+    /* wrap: viewport de perspetiva local (transform-style:flat por padrão
+       → isola do contexto 3D da cena; sem 3D transform próprio
+       → bounding rect do step mantém-se inalterado) */
+    const wrap=document.createElement('div');
+    wrap.style.cssText='position:absolute;inset:0;z-index:1;'
+      +'perspective:800px;perspective-origin:50% 50%';
+
+    /* tl: camada de tilt — recebe rotateX/Y */
+    const tl=document.createElement('div');
+    tl.style.cssText='position:absolute;inset:0;transform-origin:50% 50%;'
+      +'padding:'+pt+' '+pr+' '+pb+' '+pl+';box-sizing:border-box';
+
+    /* Move todo o conteúdo do step para tl */
+    while(el.firstChild) tl.appendChild(el.firstChild);
+    wrap.appendChild(tl);
+    el.appendChild(wrap);
+    el.style.padding='0'; /* padding migrado para tl */
+
+    /* Glare lime dentro de tl */
     const g=document.createElement('div');
-    g.style.cssText='position:absolute;inset:0;pointer-events:none;z-index:50;opacity:0;transition:opacity .25s';
-    el.appendChild(g);
+    g.style.cssText='position:absolute;inset:0;pointer-events:none;'
+      +'z-index:50;opacity:0;transition:opacity .25s';
+    tl.appendChild(g);
+
+    const d={el,tl,rx:0,ry:0,tx:0,ty:0};
 
     el.addEventListener('mousemove',e=>{
       if(!document.body.classList.contains('overview')) return;
@@ -962,13 +990,12 @@ body.overview #hint-overview{display:flex}
     el.addEventListener('mouseenter',()=>{
       if(!document.body.classList.contains('overview')) return;
       el.style.outline='1px solid rgba(209,255,0,.22)';
-      el.style.filter='drop-shadow(0 0 20px rgba(209,255,0,.18))';
     });
 
     el.addEventListener('mouseleave',()=>{
       d.tx=0; d.ty=0;
       g.style.opacity='0';
-      el.style.outline=''; el.style.filter='';
+      el.style.outline='';
     });
 
     stepItems.push(d);
@@ -980,17 +1007,14 @@ body.overview #hint-overview{display:flex}
     stepItems.forEach(d=>{
       d.rx+=(d.tx-d.rx)*LERP_S;
       d.ry+=(d.ty-d.ry)*LERP_S;
-      d.el.style.transform=d.base+' perspective(900px) rotateX('+d.rx.toFixed(3)+'deg) rotateY('+d.ry.toFixed(3)+'deg)';
+      d.tl.style.transform='rotateX('+d.rx.toFixed(3)+'deg) rotateY('+d.ry.toFixed(3)+'deg)';
     });
     requestAnimationFrame(tick);
   })();
 
   new MutationObserver(()=>{
     if(!document.body.classList.contains('overview')){
-      stepItems.forEach(d=>{
-        d.tx=0; d.ty=0;
-        d.el.style.outline=''; d.el.style.filter='';
-      });
+      stepItems.forEach(d=>{ d.tx=0; d.ty=0; d.el.style.outline=''; });
     }
   }).observe(document.body,{attributes:true,attributeFilter:['class']});
 })();
