@@ -738,7 +738,7 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
           </div>
         </div>
         <!-- QR CODE -->
-        <div id="qr-section" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px;background:var(--card);border:1px solid var(--b);border-left:3px solid var(--lime);flex-shrink:0;cursor:zoom-in;transition:border-color .2s,box-shadow .2s">
+        <div id="qr-section" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px;background:rgba(209,255,0,0.04);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid rgba(209,255,0,0.10);border-left:3px solid var(--lime);flex-shrink:0;cursor:zoom-in;transition:border-color .2s,box-shadow .2s,background .2s">
           <div style="font-family:var(--fm);font-size:8px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--lime);text-align:center">CÓDIGO FONTE</div>
           <div id="qr-github" style="padding:8px;background:#050505;display:flex;align-items:center;justify-content:center"></div>
           <div style="font-family:var(--fm);font-size:8px;color:var(--meta);letter-spacing:.08em;text-align:center;max-width:130px;line-height:1.5">github.com/<br>vritik246800/<br>slides-de-AI</div>
@@ -872,8 +872,8 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
     ctx.strokeRect(r.left, r.top, r.width, r.height);
     ctx.restore();
 
-    /* — HUD label above slide — */
-    if (alpha > .25) {
+    /* — HUD label above slide (skipped when idx < 0) — */
+    if (alpha > .25 && idx >= 0) {
       const fs = Math.max(9, Math.round(r.width * .024));
       ctx.save();
       ctx.globalAlpha = Math.min(alpha * 1.8, 1);
@@ -918,9 +918,9 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
       const pulse = .4 + .25 * Math.sin(t * 1.3);
 
       if (inQRZoom) {
-        /* corner brackets around the QR code while zoomed in */
-        const qrEl = document.getElementById('qr-github');
-        if (qrEl) drawCorners(qrEl.getBoundingClientRect(), pulse * .75);
+        /* same aura effect as overview hover, focused on the QR section */
+        const qrSec = document.getElementById('qr-section');
+        if (qrSec) drawAura(qrSec.getBoundingClientRect(), .65 + .35 * Math.sin(t * 2.8), -1);
       } else {
         /* subtle bg radial glow */
         const cx  = r.left + r.width  / 2;
@@ -1053,12 +1053,6 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
   /* ── QR code zoom ────────────────────────── */
   const qrSection = document.getElementById('qr-section');
   if (qrSection) {
-    qrSection.addEventListener('mouseenter', () => {
-      if (!inQRZoom) qrSection.style.borderColor = 'rgba(209,255,0,.45)';
-    });
-    qrSection.addEventListener('mouseleave', () => {
-      if (!inQRZoom) qrSection.style.borderColor = '';
-    });
     qrSection.addEventListener('click', e => {
       if (inOverview) return;
       e.stopPropagation();
@@ -1140,6 +1134,8 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
 
   document.querySelectorAll('.card').forEach(el=>make(el,MC,true));
   document.querySelectorAll('.tb').forEach(el=>{if(!el.closest('.card'))make(el,MT,false);});
+  const qrSecTilt=document.getElementById('qr-section');
+  if(qrSecTilt) make(qrSecTilt,MC,true);
 
   (function tick(){
     items.forEach(d=>{
