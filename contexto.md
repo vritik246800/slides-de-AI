@@ -425,7 +425,20 @@ Todos os ícones (guardar, abrir, apagar, ajuda, etc.) são desenhados vetorialm
 
 ---
 
-## 14. Resumo para o Relatório
+## 14. Critérios de Avaliação
+
+| Critério | Cobertura neste documento |
+|---|---|
+| **Modelação correcta do problema de busca** | Secções 2 e 4 — estados, ações, custos, grelha, `Problem` |
+| **Implementação dos algoritmos** | Secção 3 — BFS, Greedy, A\*, heurística de Manhattan |
+| **Interface e visualização** | Secção 8 — GUI Pygame, animação, análise gráfica |
+| **Comparação experimental dos algoritmos** | Secções 6, 10 e 11 — métricas, casos de teste, tradeoffs |
+| **Relatório técnico** | Secção 15 — estrutura e pontos a desenvolver |
+| **Apresentação e defesa** | Secção 16 — guia de apresentação e perguntas esperadas |
+
+---
+
+## 15. Resumo para o Relatório
 
 Para o relatório académico, os pontos mais relevantes a desenvolver são:
 
@@ -437,3 +450,34 @@ Para o relatório académico, os pontos mais relevantes a desenvolver são:
 6. **Conclusão:** qual o melhor algoritmo para cada tipo de cenário e porquê.
 
 Para obter os resultados: correr `python main.py --test` e guardar a saída; ou usar a GUI, clicar "Executar Todos" em cada cenário e consultar a tab "Análise".
+
+---
+
+## 16. Apresentação e Defesa
+
+### 16.1 Estrutura sugerida para a apresentação (10–15 min)
+
+1. **Problema** (1–2 min) — o que é navegação num mapa 2D, o que se quer encontrar e porquê é um problema de busca.
+2. **Algoritmos** (3–4 min) — explicar BFS, Greedy e A\* com a intuição principal de cada um (fila FIFO; menor h(n); menor f = g+h). Usar o diagrama da grelha para ilustrar a expansão de nós.
+3. **Implementação** (2–3 min) — mostrar a arquitetura (modelo / algoritmos / UI separados), destacar o contrato único que todos os algoritmos respeitam e a estratégia two-pass para inimigos.
+4. **Demo ao vivo** (2–3 min) — abrir a GUI, desenhar um mapa com obstáculos e terrenos variados, clicar "Executar Todos" e mostrar a tab "Análise".
+5. **Resultados e conclusão** (2 min) — comparar os 4 casos de teste; concluir qual o algoritmo mais adequado para cada cenário.
+
+### 16.2 Perguntas frequentes na defesa
+
+| Pergunta | Resposta-chave |
+|---|---|
+| Por que é que o A\* é ótimo e o Greedy não? | A\* usa `g(n)+h(n)` — considera o custo já percorrido; Greedy usa só `h(n)` e pode escolher um caminho "perto" que afinal é mais caro. |
+| O que é uma heurística admissível? | Uma que nunca sobrestima o custo real. Manhattan é admissível porque assume custo mínimo 1 por passo. |
+| Por que é que o BFS não encontra o caminho de menor custo? | Porque trata todos os passos como iguais (custo 1) — ignora os custos de terreno. Encontra o de menor número de células, não o mais barato. |
+| Como é que o A\* se comporta quando `h(n) = 0`? | Degenera em Dijkstra — expande por custo real `g(n)` e continua ótimo, mas mais lento. |
+| O que acontece se não existir caminho? | Todos os algoritmos esgotam a fila sem encontrar o objetivo e retornam `path: None`. |
+| Por que razão usam Manhattan e não Euclidiana? | O mapa só permite movimentos ortogonais (4 direções); Manhattan conta exatamente o número mínimo de passos possíveis — é mais informativa e ainda admissível. |
+| Como foram medidos os tempos? | Com `time.perf_counter()` em torno de cada chamada ao algoritmo — mede apenas a computação, sem incluir a renderização. |
+
+### 16.3 Pontos a demonstrar ao vivo
+
+- Desenhar um mapa com terreno difícil e mostrar que A\* evita esse terreno enquanto BFS passa por ele.
+- Criar um mapa sem solução e mostrar que todos os algoritmos reportam corretamente `None`.
+- Usar "Executar Todos" e apontar o valor destacado a verde (melhor) em cada coluna da tabela.
+- Animar o caminho e explicar a diferença de velocidade conforme o terreno.
