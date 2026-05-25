@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Navegação 2D com IA — Canvas Slides</title>
+<title>App_Navegacao — Inteligência Artificial</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -190,14 +190,35 @@ body.overview #hint-overview{display:flex}
     <!-- S01 CAPA ─────────────────────────────── -->
     <div class="step active" id="s1" data-x="0" data-y="0" data-rz="0" data-s="1">
       <div class="bgw">AI</div>
-      <div style="display:flex;flex-direction:column;justify-content:center;min-height:560px">
-        <div class="ey">[TP] TRABALHO PRÁTICO · INTELIGÊNCIA ARTIFICIAL</div>
-        <div class="dt">NAVEGAÇÃO 2D<br>COM <span class="ac">INTELIGÊNCIA</span><br>ARTIFICIAL</div>
-        <p class="lead">Implementação e comparação de BFS, Greedy e A* num mapa em grelha 2D com interface gráfica Pygame.</p>
-        <div class="cm2">
-          <div class="pill" style="flex:1"><div class="dot"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">BFS — Não Informado</span></div>
-          <div class="pill" style="flex:1"><div class="dot b"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">Greedy — Informado</span></div>
-          <div class="pill" style="flex:1"><div class="dot f"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">A* — Ótimo</span></div>
+      <div style="display:flex;gap:40px;align-items:flex-start;min-height:560px;padding-top:20px">
+        <!-- LEFT: título + pills -->
+        <div style="flex:1.1;display:flex;flex-direction:column;justify-content:center">
+          <div class="ey">[TP] TRABALHO PRÁTICO · INTELIGÊNCIA ARTIFICIAL</div>
+          <div class="dt">NAVEGAÇÃO DE<br>PERSONAGEM<br>EM <span class="ac">GRELHA 2D</span></div>
+          <p class="lead" style="margin-bottom:20px">Implementação e comparação de BFS, Greedy e A* num mapa em grelha 2D com interface gráfica Pygame.</p>
+          <div class="cm2" style="flex-direction:column;gap:6px;margin-top:0">
+            <div class="pill"><div class="dot"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">BFS — NÃO INFORMADO</span></div>
+            <div class="pill"><div class="dot b"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">GREEDY — INFORMADO</span></div>
+            <div class="pill"><div class="dot f"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">A* — ÓTIMO</span></div>
+          </div>
+        </div>
+        <!-- RIGHT: grupo -->
+        <div style="flex:.9;display:flex;flex-direction:column;justify-content:center;gap:7px">
+          <div style="font-family:var(--fm);font-size:9px;font-weight:600;letter-spacing:.20em;text-transform:uppercase;color:var(--lime);margin-bottom:4px">GRUPO 5 · INTELIGÊNCIA ARTIFICIAL</div>
+          <div class="card" style="padding:14px 16px">
+            <div style="display:flex;flex-direction:column;gap:0">
+              <div class="dr"><span class="k2">20190461</span><span class="v" style="font-size:11.5px">Shuraim Hussene Ishakgi</span></div>
+              <div class="dr"><span class="k2">20240187</span><span class="v" style="font-size:11.5px">Saymara Chambal</span></div>
+              <div class="dr"><span class="k2">20190025</span><span class="v lm" style="font-size:11.5px">Vritik Valabdas</span></div>
+              <div class="dr"><span class="k2">20200039</span><span class="v" style="font-size:11.5px">Martin Daud Ribeiro</span></div>
+              <div class="dr"><span class="k2">20230471</span><span class="v" style="font-size:11.5px">Rahissa Mahomed Al Yashin</span></div>
+              <div class="dr"><span class="k2">20200612</span><span class="v" style="font-size:11.5px">Shelton Arlindo</span></div>
+            </div>
+          </div>
+          <div style="margin-top:6px;padding:8px 12px;background:var(--panel);border:1px solid var(--b);border-left:3px solid var(--lime)">
+            <p style="font-family:var(--fm);font-size:9px;color:var(--meta);letter-spacing:.10em;text-transform:uppercase">Cadeira&nbsp;&nbsp;<span style="color:var(--lime)">Inteligência Artificial</span></p>
+            <p style="font-family:var(--fm);font-size:9px;color:var(--meta);letter-spacing:.10em;text-transform:uppercase;margin-top:4px">Tema&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--lime)">Navegação 2D em Grelha</span></p>
+          </div>
         </div>
       </div>
     </div>
@@ -205,41 +226,52 @@ body.overview #hint-overview{display:flex}
     <!-- S02 OBJETIVO ────────────────────────── -->
     <div class="step" id="s2" data-x="1200" data-y="0" data-rz="0" data-s="1">
       <div class="ey">[01] OBJETIVO DO TRABALHO</div>
-      <div class="st">O que foi implementado</div>
-      <div class="g3" style="margin-bottom:11px">
-        <div class="card"><div class="ct"><span class="br">[BFS]</span>BUSCA EM LARGURA</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Busca <strong style="color:var(--fg)">não informada</strong>. FIFO. Menor nº de passos. Ignora custos de terreno.</p></div>
-        <div class="card"><div class="ct"><span class="br">[GRD]</span>GREEDY BEST-FIRST</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Busca <strong style="color:var(--fg)">informada</strong>. Usa h(n). Rápido mas não garante menor custo total.</p></div>
-        <div class="card"><div class="ct"><span class="br">[A*]</span>A-ESTRELA</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Busca <strong style="color:var(--fg)">informada</strong>. f(n)=g(n)+h(n). Ótimo e completo com h admissível.</p></div>
+      <div class="st">O Que Foi Implementado</div>
+      <div class="g3" style="margin-bottom:14px">
+        <div class="card">
+          <div class="ct"><span class="br">[BFS]</span>BUSCA EM LARGURA</div>
+          <p style="font-size:12px;color:var(--meta);line-height:1.55">Busca <strong style="color:var(--fg)">não informada</strong>. Estrutura FIFO. Garante menor nº de passos. Ignora custos de terreno.</p>
+        </div>
+        <div class="card">
+          <div class="ct"><span class="br">[GRD]</span>GREEDY BEST-FIRST</div>
+          <p style="font-size:12px;color:var(--meta);line-height:1.55">Busca <strong style="color:var(--fg)">informada</strong>. Usa h(n). Rápido mas não garante o caminho de menor custo total.</p>
+        </div>
+        <div class="card">
+          <div class="ct"><span class="br">[A*]</span>A-ESTRELA</div>
+          <p style="font-size:12px;color:var(--meta);line-height:1.55">Busca <strong style="color:var(--fg)">informada</strong>. f(n)=g(n)+h(n). Ótimo e completo quando a heurística é admissível.</p>
+        </div>
       </div>
-      <div class="hl">O programa permite <strong>desenhar o mapa</strong> (obstáculos, terreno difícil, armadilhas, inimigos), definir início/objetivo, executar os algoritmos e observar o caminho e as métricas.</div>
+      <div class="hl">O programa permite <strong>desenhar o mapa</strong> (obstáculos, terreno difícil, armadilhas, inimigos), definir início/objetivo, executar os algoritmos e observar o caminho e as métricas de desempenho.</div>
     </div>
 
     <!-- S03 PROBLEMA DE BUSCA ───────────────── -->
     <div class="step" id="s3" data-x="2400" data-y="0" data-rz="0" data-s="1">
       <div class="ey">[02] FUNDAMENTOS TEÓRICOS</div>
-      <div class="st">Problema de Busca</div>
+      <div class="st">Problema de Busca em Espaço de Estados</div>
       <div class="g2">
         <div>
-          <p style="font-size:12px;color:var(--meta);margin-bottom:12px;line-height:1.55">Forma formal de descrever navegação num espaço de possibilidades com 4 elementos:</p>
-          <table class="tb"><thead><tr><th>Componente</th><th>Significado</th></tr></thead>
-          <tbody>
-            <tr><td class="lm">Estado inicial</td><td>Posição de início do agente</td></tr>
-            <tr><td class="lm">Objetivo</td><td>Posição que o agente quer alcançar</td></tr>
-            <tr><td class="lm">Ações</td><td>Movimentos ortogonais ↑ ↓ ← →</td></tr>
-            <tr><td class="lm">Custo de passo</td><td>Custo de entrar na célula vizinha</td></tr>
-          </tbody></table>
-          <div style="margin-top:11px" class="hl">O algoritmo explora a partir do início, expandindo vizinhos, até encontrar o objetivo.</div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:12px;line-height:1.55">Forma formal de descrever navegação num espaço de possibilidades — cada célula da grelha é um estado:</p>
+          <table class="tb">
+            <thead><tr><th>Componente</th><th>Significado</th></tr></thead>
+            <tbody>
+              <tr><td class="lm">Estado inicial</td><td>Posição de partida do agente</td></tr>
+              <tr><td class="lm">Objetivo</td><td>Posição que o agente quer alcançar</td></tr>
+              <tr><td class="lm">Ações</td><td>Movimentos ortogonais ↑ ↓ ← →</td></tr>
+              <tr><td class="lm">Custo de passo</td><td>Custo de entrar na célula vizinha</td></tr>
+            </tbody>
+          </table>
         </div>
         <div class="card">
-          <div class="ct"><span class="br">[ESPAÇO DE ESTADOS]</span>GRELHA 2D</div>
-          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Cada célula é um estado. Gera vizinhos adjacentes não bloqueados e repete.</p>
+          <div class="ct"><span class="br">[GRELHA 2D]</span>ESPAÇO DE ESTADOS</div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Cada célula (linha, coluna) é um estado hashável — permite rastreamento eficiente.</p>
           <div class="dr"><span class="k2">Dimensão</span><span class="v lm">3×3 até 100×100</span></div>
-          <div class="dr"><span class="k2">Movimentos</span><span class="v">4 direções ortogonais</span></div>
-          <div class="dr"><span class="k2">Estado</span><span class="v lm">State(row, col)</span></div>
-          <div class="dr"><span class="k2">Hashável</span><span class="v">Usado em sets e dicts</span></div>
-          <div class="dr"><span class="k2">Resize</span><span class="v lm">Dinâmico em runtime</span></div>
+          <div class="dr"><span class="k2">Direções</span><span class="v">4 ortogonais</span></div>
+          <div class="dr"><span class="k2">State</span><span class="v lm">State(row, col)</span></div>
+          <div class="dr"><span class="k2">Hashável</span><span class="v lm">Sim — usado em sets e dicts</span></div>
+          <div class="dr"><span class="k2">Redim.</span><span class="v lm">Dinâmico em runtime</span></div>
         </div>
       </div>
+      <div class="hl" style="margin-top:11px">O algoritmo expande a partir do estado inicial, gerando vizinhos adjacentes não bloqueados, até alcançar o <strong>objetivo</strong> ou esgotar todas as possibilidades.</div>
     </div>
 
     <!-- S04 TIPOS DE BUSCA ──────────────────── -->
@@ -249,20 +281,20 @@ body.overview #hint-overview{display:flex}
       <div class="g2" style="margin-bottom:11px">
         <div class="card">
           <div class="ct"><span class="br">[NÃO INFORMADA]</span>SEM HEURÍSTICA</div>
-          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Explora sem saber onde está o objetivo. Sem informação sobre distância restante.</p>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Explora sem saber onde está o objetivo. Trata todos os passos como custo igual.</p>
           <div class="pill"><div class="dot"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">BFS — FIFO</span></div>
           <div class="pill" style="opacity:.35"><div class="dot"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">DFS — LIFO</span></div>
-          <div style="margin-top:10px;padding:7px 11px;background:var(--panel);border-left:3px solid var(--bs)"><p style="font-family:var(--fm);font-size:9px;color:var(--meta)">Ordenação: FIFO (BFS) · LIFO (DFS)</p></div>
+          <div style="margin-top:10px;padding:7px 11px;background:var(--panel);border-left:3px solid var(--bs)"><p style="font-family:var(--fm);font-size:9px;color:var(--meta)">Ordenação: FIFO — sem heurística</p></div>
         </div>
         <div class="card">
           <div class="ct"><span class="br">[INFORMADA]</span>COM HEURÍSTICA h(n)</div>
-          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Usa h(n) que estima custo de n ao objetivo para guiar a busca eficientemente.</p>
-          <div class="pill"><div class="dot b"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">Greedy — f(n)=h(n)</span></div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Usa h(n) que estima o custo de n ao objetivo para guiar a busca eficientemente.</p>
+          <div class="pill"><div class="dot b"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">GREEDY — f(n)=h(n)</span></div>
           <div class="pill"><div class="dot f"></div><span style="font-family:var(--fm);font-size:10px;letter-spacing:.10em;text-transform:uppercase">A* — f(n)=g(n)+h(n)</span></div>
-          <div style="margin-top:10px;padding:7px 11px;background:var(--panel);border-left:3px solid var(--lime)"><p style="font-family:var(--fm);font-size:9px;color:var(--lime)">Heurística: Distância de Manhattan</p></div>
+          <div style="margin-top:10px;padding:7px 11px;background:var(--panel);border-left:3px solid var(--lime)"><p style="font-family:var(--fm);font-size:9px;color:var(--lime)">h admissível: nunca sobrestima o custo real</p></div>
         </div>
       </div>
-      <div class="fm2">h(n) = |linha_n − linha_obj| + |coluna_n − coluna_obj|</div>
+      <div class="fm2">h(n) = |linha_n − linha_obj| + |coluna_n − coluna_obj| &nbsp;&nbsp;&nbsp;[Distância de Manhattan]</div>
     </div>
 
     <!-- S05 BFS ─────────────────────────────── -->
@@ -272,313 +304,436 @@ body.overview #hint-overview{display:flex}
       <div class="g2">
         <div>
           <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Explora todos os nós a uma profundidade antes de avançar. Estrutura: <code style="font-family:var(--fm);color:var(--lime)">collections.deque</code> (FIFO).</p>
-          <ol class="sl"><li>Coloca estado inicial numa fila FIFO</li><li>Retira o primeiro estado e expande vizinhos</li><li>Vizinhos não visitados adicionados ao fim</li><li>Repete até objetivo ou fila vazia</li></ol>
-          <div style="margin-top:11px" class="fm2">f(n) = profundidade(n) · FIFO puro</div>
+          <ol class="sl">
+            <li>Coloca estado inicial numa fila FIFO</li>
+            <li>Retira o primeiro estado e expande os seus vizinhos</li>
+            <li>Vizinhos não visitados adicionados ao fim da fila</li>
+            <li>Repete até objetivo ou fila vazia</li>
+          </ol>
+          <div class="fm2" style="margin-top:11px">f(n) = FIFO puro — sem ordenação por custo</div>
         </div>
         <div>
-          <div class="card" style="margin-bottom:9px">
-            <div class="ct"><span class="br">[PROPRIEDADES]</span>BFS</div>
-            <div class="dr"><span class="k2">Completo</span><span class="v lm">Sim</span></div>
-            <div class="dr"><span class="k2">Ótimo passos</span><span class="v lm">Sim</span></div>
-            <div class="dr"><span class="k2">Ótimo custo</span><span class="v fl">Não — ignora terreno</span></div>
-            <div class="dr"><span class="k2">Memória</span><span class="v fl">Alta — O(b^d)</span></div>
-            <div class="dr"><span class="k2">Heurística</span><span class="v" style="color:var(--meta)">Nenhuma</span></div>
-            <div class="dr"><span class="k2">Ficheiro</span><span class="v lm">algorithms/bfs.py</span></div>
+          <div class="card">
+            <div class="ct"><span class="br">[BFS]</span>PROPRIEDADES</div>
+            <div class="dr"><span class="k2">Completo</span><span class="v lm">Sim — encontra solução se existir</span></div>
+            <div class="dr"><span class="k2">Ótimo em passos</span><span class="v lm">Sim — menor nº de células</span></div>
+            <div class="dr"><span class="k2">Ótimo em custo</span><span class="v fl">Não — ignora custos de terreno</span></div>
+            <div class="dr"><span class="k2">Estrutura</span><span class="v lm">collections.deque</span></div>
+            <div class="dr"><span class="k2">Memória</span><span class="v">Alta — guarda todos os nós</span></div>
           </div>
-          <div class="hl"><strong>BFS</strong> garante o caminho mais curto em passos, mas não em custo quando há terrenos com custos diferentes.</div>
+          <div class="hl" style="margin-top:9px">Quando todos os terrenos têm o mesmo custo, BFS e A* encontram <strong>o mesmo caminho</strong>.</div>
         </div>
       </div>
     </div>
 
     <!-- S06 GREEDY ──────────────────────────── -->
-    <div class="step" id="s6" data-x="4800" data-y="860" data-rz="0" data-s="1">
+    <div class="step" id="s6" data-x="0" data-y="860" data-rz="-2" data-s="1">
       <div class="ey">[05] ALGORITMO — BUSCA INFORMADA</div>
       <div class="st">Greedy Best-First</div>
       <div class="g2">
         <div>
-          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Sempre expande o nó mais próximo do objetivo segundo h(n). Estrutura: <code style="font-family:var(--fm);color:var(--lime)">heapq</code> (min-heap).</p>
-          <ol class="sl"><li>Coloca estado inicial na heap com prioridade h(n)</li><li>Retira sempre o nó com menor h(n)</li><li>Expande vizinhos e insere na heap com h(n)</li><li>Repete até objetivo ou heap vazia</li></ol>
-          <div style="margin-top:11px" class="fm2">f(n) = h(n)</div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Sempre expande o nó com menor <code style="font-family:var(--fm);color:var(--lime)">h(n)</code> — aparentemente mais próximo do objetivo. Estrutura: <code style="font-family:var(--fm);color:var(--lime)">heapq</code>.</p>
+          <ol class="sl">
+            <li>Coloca estado inicial em heap com prioridade h(n)</li>
+            <li>Retira o nó com menor h(n)</li>
+            <li>Expande vizinhos e insere com respetivas h(n)</li>
+            <li>Repete até objetivo ou heap vazia</li>
+          </ol>
+          <div class="fm2" style="margin-top:11px">f(n) = h(n)</div>
         </div>
         <div>
-          <div class="card" style="margin-bottom:9px">
-            <div class="ct"><span class="br">[PROPRIEDADES]</span>GREEDY</div>
-            <div class="dr"><span class="k2">Velocidade</span><span class="v lm">Alta — poucas expansões</span></div>
-            <div class="dr"><span class="k2">Ótimo custo</span><span class="v fl">Não</span></div>
-            <div class="dr"><span class="k2">Completo</span><span class="v fl">Não sempre</span></div>
-            <div class="dr"><span class="k2">Labirintos</span><span class="v fl">Pode ficar preso</span></div>
-            <div class="dr"><span class="k2">Heurística</span><span class="v lm">Manhattan h(n)</span></div>
-            <div class="dr"><span class="k2">Ficheiro</span><span class="v lm">algorithms/greedy.py</span></div>
+          <div class="card">
+            <div class="ct"><span class="br">[GRD]</span>PROPRIEDADES</div>
+            <div class="dr"><span class="k2">Rápido</span><span class="v lm">Poucos nós explorados</span></div>
+            <div class="dr"><span class="k2">Ótimo em custo</span><span class="v fl">Não — pode escolher caminho mais caro</span></div>
+            <div class="dr"><span class="k2">Completo</span><span class="v mt">Sim (pode falhar em labirintos)</span></div>
+            <div class="dr"><span class="k2">Estrutura</span><span class="v lm">heapq</span></div>
+            <div class="dr"><span class="k2">Perigo</span><span class="v fl">Becos sem saída com h mal guiada</span></div>
           </div>
-          <div class="hl"><strong>Trade-off:</strong> Muito rápido mas pode encontrar caminhos caros — não considera g(n).</div>
+          <div class="hl" style="margin-top:9px">Greedy vai "em linha reta" para o objetivo mas ignora o custo já percorrido — pode ser <strong>enganado por terrenos baratos longe do objetivo</strong>.</div>
         </div>
       </div>
     </div>
 
     <!-- S07 A* ──────────────────────────────── -->
-    <div class="step" id="s7" data-x="3600" data-y="860" data-rz="-2" data-s="1">
+    <div class="step" id="s7" data-x="1200" data-y="860" data-rz="0" data-s="1">
       <div class="ey">[06] ALGORITMO — BUSCA INFORMADA ÓTIMA</div>
       <div class="st">A* — A-Estrela</div>
       <div class="g2">
         <div>
-          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Combina o custo real g(n) com a estimativa h(n). Algoritmo de referência — ótimo e completo.</p>
-          <ol class="sl"><li>Coloca estado inicial na heap com f(n)=g(n)+h(n)</li><li>Retira sempre o nó com menor f(n)</li><li>g_novo = g(atual) + custo_passo para cada vizinho</li><li>Se g_novo melhora custo conhecido, atualiza</li></ol>
-          <div style="margin-top:11px" class="fm2">f(n) = g(n) + h(n)</div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Combina o custo real percorrido <code style="font-family:var(--fm);color:var(--lime)">g(n)</code> com a estimativa heurística <code style="font-family:var(--fm);color:var(--lime)">h(n)</code>. Ótimo e completo quando h é admissível.</p>
+          <ol class="sl">
+            <li>Coloca estado inicial em heap com f(n)=g(n)+h(n)</li>
+            <li>Retira o nó com menor f(n)</li>
+            <li>Calcula g_novo = g(atual) + custo_passo para cada vizinho</li>
+            <li>Atualiza se melhora o custo conhecido — insere na heap</li>
+          </ol>
+          <div class="fm2" style="margin-top:11px">f(n) = g(n) + h(n)</div>
         </div>
         <div>
-          <div class="card" style="margin-bottom:9px">
-            <div class="ct"><span class="br">[SÍMBOLOS]</span>A*</div>
-            <div class="dr"><span class="k2">g(n)</span><span class="v" style="font-size:11px">Custo real desde início até n</span></div>
-            <div class="dr"><span class="k2">h(n)</span><span class="v" style="font-size:11px">Estimativa heurística de n ao obj.</span></div>
-            <div class="dr"><span class="k2">f(n)</span><span class="v lm" style="font-size:11px">Custo total estimado</span></div>
-          </div>
           <div class="card">
-            <div class="ct"><span class="br">[PROPRIEDADES]</span>A*</div>
+            <div class="ct"><span class="br">[A*]</span>COMPONENTES DA FUNÇÃO f(n)</div>
+            <table class="tb" style="margin-bottom:9px">
+              <thead><tr><th>Símbolo</th><th>Significado</th></tr></thead>
+              <tbody>
+                <tr><td class="lm">g(n)</td><td>Custo real acumulado desde o início</td></tr>
+                <tr><td class="lm">h(n)</td><td>Estimativa heurística ao objetivo</td></tr>
+                <tr><td class="lm">f(n)</td><td>Estimativa do custo total do caminho</td></tr>
+              </tbody>
+            </table>
             <div class="dr"><span class="k2">Completo</span><span class="v lm">Sim</span></div>
-            <div class="dr"><span class="k2">Ótimo custo</span><span class="v lm">Sim (h admissível)</span></div>
-            <div class="dr"><span class="k2">Eficiência</span><span class="v lm">Melhor que BFS</span></div>
-            <div class="dr"><span class="k2">Ficheiro</span><span class="v lm">algorithms/astar.py</span></div>
+            <div class="dr"><span class="k2">Ótimo em custo</span><span class="v lm">Sim — quando h admissível</span></div>
+            <div class="dr"><span class="k2">Estrutura</span><span class="v lm">heapq</span></div>
+            <div class="dr"><span class="k2">Degrada para</span><span class="v mt">Dijkstra quando h(n)=0</span></div>
           </div>
+          <div class="hl" style="margin-top:9px">Quando h(n)=0 em todos os nós, A* degenera em <strong>Dijkstra</strong> — ainda ótimo mas mais lento.</div>
         </div>
       </div>
     </div>
 
     <!-- S08 MODELAÇÃO ───────────────────────── -->
     <div class="step" id="s8" data-x="2400" data-y="860" data-rz="0" data-s="1">
-      <div class="ey">[07] MODELAÇÃO FORMAL</div>
-      <div class="st">Tipos de Célula e Custos</div>
+      <div class="ey">[07] MODELAÇÃO FORMAL DO PROBLEMA</div>
+      <div class="st">Grelha, Estado e Problema</div>
       <div class="g2">
         <div>
           <table class="tb" style="margin-bottom:11px">
-            <thead><tr><th>Tipo</th><th>Constante</th><th>Int</th><th>Custo</th></tr></thead>
+            <thead><tr><th>Tipo</th><th>Constante</th><th>Custo</th></tr></thead>
             <tbody>
-              <tr><td>Livre</td><td class="lm">FREE</td><td class="mt">0</td><td class="lm">1</td></tr>
-              <tr><td>Obstáculo</td><td class="lm">OBSTACLE</td><td class="mt">1</td><td class="fl">∞</td></tr>
-              <tr><td>Armadilha</td><td class="lm">TRAP</td><td class="mt">2</td><td class="lm">5</td></tr>
-              <tr><td>Difícil</td><td class="lm">DIFFICULT</td><td class="mt">3</td><td class="lm">3</td></tr>
-              <tr><td>Inimigo</td><td class="lm">ENEMY</td><td class="mt">4</td><td>1 <span style="color:var(--flare)">†</span></td></tr>
+              <tr><td class="lm">Livre</td><td class="lm">FREE</td><td class="lm">1</td></tr>
+              <tr><td class="fl">Obstáculo</td><td class="fl">OBSTACLE</td><td class="fl">∞</td></tr>
+              <tr><td class="lm">Difícil</td><td class="lm">DIFFICULT</td><td class="lm">3</td></tr>
+              <tr><td class="fl">Armadilha</td><td class="fl">TRAP</td><td class="fl">5</td></tr>
+              <tr><td class="mt">Inimigo</td><td class="mt">ENEMY</td><td class="mt">1 algorítmico</td></tr>
             </tbody>
           </table>
-          <p style="font-family:var(--fm);font-size:9px;color:var(--meta)">† Custo normal algoritmicamente; fatal na animação.</p>
+          <div class="hl">State(row, col) é <strong>hashável</strong> — pode ser chave em dicts e membro de sets. Dois estados são iguais se têm a mesma linha e coluna.</div>
         </div>
-        <div>
-          <div class="card" style="margin-bottom:9px">
-            <div class="ct"><span class="br">[CLASSES]</span>MODEL/</div>
-            <div class="dr"><span class="k2">state.py</span><span class="v lm">State(row,col) hashável</span></div>
-            <div class="dr"><span class="k2">grid.py</span><span class="v">Matriz 2D + resize</span></div>
-            <div class="dr"><span class="k2">problem.py</span><span class="v lm">actions·result·step_cost</span></div>
-          </div>
-          <div class="hl"><strong>Two-pass:</strong> 1ª tentativa com <code style="font-family:var(--fm);color:var(--lime)">avoid_enemies=True</code>. Sem solução → retenta com False — ativa "capturado" na animação.</div>
+        <div class="card">
+          <div class="ct"><span class="br">[PROBLEM]</span>INTERFACE DOS ALGORITMOS</div>
+          <div class="dr"><span class="k2">actions(state)</span><span class="v lm">Movimentos válidos</span></div>
+          <div class="dr"><span class="k2">result(state, action)</span><span class="v lm">Devolve o novo estado</span></div>
+          <div class="dr"><span class="k2">step_cost(state, action)</span><span class="v lm">Custo da célula vizinha</span></div>
+          <div class="dr"><span class="k2">is_goal(state)</span><span class="v lm">Verifica se é o objetivo</span></div>
+          <p style="font-size:11px;color:var(--meta);margin-top:11px;line-height:1.55"><code style="font-family:var(--fm);color:var(--lime)">avoid_enemies=True</code> — inimigos tratados como obstáculos na primeira tentativa de resolução.</p>
         </div>
       </div>
     </div>
 
     <!-- S09 CONTRATO ────────────────────────── -->
-    <div class="step" id="s9" data-x="1200" data-y="860" data-rz="0" data-s="1">
+    <div class="step" id="s9" data-x="3600" data-y="860" data-rz="3" data-s="1">
       <div class="ey">[08] CONTRATO DOS ALGORITMOS</div>
-      <div class="st">Formato de Saída</div>
+      <div class="st">Saída Uniforme — Mesmo Formato</div>
       <div class="g2">
-        <div class="cb"><span class="k">def</span> bfs(problem) -> <span class="k">dict</span>:
-    <span class="k">return</span> {
-        <span class="s">"path"</span>:     list | <span class="k">None</span>,
-        <span class="cm"># caminho ou None se sem solução</span>
-
-        <span class="s">"explored"</span>: list[tuple[int,int]],
-        <span class="cm"># ordem de expansão (animação)</span>
-
-        <span class="s">"expanded"</span>: int,
-        <span class="cm"># nós expandidos</span>
-
-        <span class="s">"cost"</span>:     float | <span class="k">None</span>,
-        <span class="cm"># custo total do terreno</span>
-
-        <span class="s">"time"</span>:     float,
-        <span class="cm"># segundos (perf_counter)</span>
-    }
-<span class="cm"># App adiciona depois:</span>
-<span class="cm">#  "travel_time_s" — estimativa animação</span></div>
         <div>
-          <div class="card" style="margin-bottom:9px">
-            <div class="ct"><span class="br">[MÉTRICAS]</span>TRACKER.PY</div>
-            <div class="dr"><span class="k2">Custo total</span><span class="v">Soma dos custos de terreno</span></div>
-            <div class="dr"><span class="k2">Nós expandidos</span><span class="v">Células processadas</span></div>
-            <div class="dr"><span class="k2">Passos</span><span class="v lm">len(path)</span></div>
-            <div class="dr"><span class="k2">Tempo (ms)</span><span class="v">Exec. do algoritmo</span></div>
-            <div class="dr"><span class="k2">Tempo viagem</span><span class="v">Estimativa animação</span></div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Todos os algoritmos têm a mesma assinatura e devolvem o mesmo dicionário — são <strong style="color:var(--fg)">intercambiáveis</strong>.</p>
+          <div class="cb"><span class="k">def</span> bfs(problem: Problem) -> <span class="k">dict</span>:
+    <span class="k">return</span> {
+        <span class="s">"path"</span>:     list[tuple] | None,
+        <span class="s">"explored"</span>: list[tuple],
+        <span class="s">"expanded"</span>: <span class="k">int</span>,
+        <span class="s">"cost"</span>:     <span class="k">float</span> | None,
+        <span class="s">"time"</span>:     <span class="k">float</span>,
+    }</div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="ct"><span class="br">[CAMPOS]</span>DICIONÁRIO DE SAÍDA</div>
+            <div class="dr"><span class="k2">path</span><span class="v lm">Caminho de células — None se sem solução</span></div>
+            <div class="dr"><span class="k2">explored</span><span class="v lm">Ordem de expansão para animação</span></div>
+            <div class="dr"><span class="k2">expanded</span><span class="v lm">Número de nós processados</span></div>
+            <div class="dr"><span class="k2">cost</span><span class="v lm">Custo total de terreno do caminho</span></div>
+            <div class="dr"><span class="k2">time</span><span class="v lm">Tempo de execução em segundos</span></div>
+            <div class="dr"><span class="k2">travel_time_s</span><span class="v mt">Adicionado pelo App após execução</span></div>
           </div>
-          <div class="hl">Melhor valor de cada coluna destacado a <strong>lime</strong> na tabela da tab "Análise".</div>
+          <div class="hl" style="margin-top:9px">path é <strong>None</strong> quando não existe solução — todos os algoritmos reportam corretamente.</div>
         </div>
       </div>
     </div>
 
     <!-- S10 ARQUITETURA ─────────────────────── -->
-    <div class="step" id="s10" data-x="0" data-y="860" data-rz="0" data-s="1">
+    <div class="step" id="s10" data-x="4800" data-y="860" data-rz="0" data-s="1">
       <div class="ey">[09] ARQUITETURA DO PROJETO</div>
-      <div class="st">Estrutura de Ficheiros</div>
+      <div class="st">Separação de Responsabilidades</div>
       <div class="g2">
         <div class="cb">projeto_ia/
-├── <span class="k">main.py</span>        <span class="cm"># GUI ou --test</span>
+├── <span class="k">main.py</span>          <span class="cm"># entrada; GUI ou --test</span>
 │
 ├── <span class="k">model/</span>
-│   ├── grid.py    <span class="cm"># Grid 2D, tipos, custos</span>
-│   ├── state.py   <span class="cm"># State(row,col) hashável</span>
-│   └── problem.py <span class="cm"># actions·result·cost</span>
+│   ├── grid.py      <span class="cm"># grelha 2D, tipos, custos</span>
+│   ├── state.py     <span class="cm"># State(row,col) hashável</span>
+│   └── problem.py   <span class="cm"># Problem — interface algoritmos</span>
 │
 ├── <span class="k">algorithms/</span>
-│   ├── bfs.py     <span class="cm"># Busca em Largura</span>
-│   ├── greedy.py  <span class="cm"># Greedy h(n)</span>
-│   ├── astar.py   <span class="cm"># A* g(n)+h(n)</span>
-│   └── heuristics.py
+│   ├── bfs.py
+│   ├── greedy.py
+│   ├── astar.py
+│   └── heuristics.py <span class="cm"># manhattan(state, goal)</span>
 │
 ├── <span class="k">metrics/</span>
-│   └── tracker.py
+│   └── tracker.py   <span class="cm"># registo e comparação</span>
 │
 └── <span class="k">ui/</span>
-    ├── app.py     <span class="cm"># loop·eventos·animação</span>
-    ├── grid_view.py
-    ├── controls.py
-    └── icons.py   <span class="cm"># vetorial, sem imgs</span></div>
+    ├── app.py        <span class="cm"># loop principal, eventos</span>
+    ├── grid_view.py  <span class="cm"># renderização da grelha</span>
+    ├── controls.py   <span class="cm"># painel lateral e tabela</span>
+    └── icons.py      <span class="cm"># ícones vetoriais Pygame</span></div>
         <div>
-          <div class="card" style="margin-bottom:9px">
-            <div class="ct"><span class="br">[SEPARAÇÃO]</span>RESPONSABILIDADES</div>
-            <ul class="bl">
-              <li><strong style="color:var(--lime)">model/</strong> — puro Python, sem Pygame</li>
-              <li><strong style="color:var(--lime)">algorithms/</strong> — recebem Problem, devolvem dict</li>
-              <li><strong style="color:var(--lime)">ui/</strong> — usa modelo sem conhecer detalhes</li>
-              <li><strong style="color:var(--lime)">metrics/</strong> — funciona terminal e GUI</li>
-            </ul>
-          </div>
-          <div class="card">
-            <div class="ct"><span class="br">[EXECUÇÃO]</span></div>
-            <div class="dr"><span class="k2">GUI</span><span class="v lm">python main.py</span></div>
-            <div class="dr"><span class="k2">Terminal</span><span class="v lm">python main.py --test</span></div>
-            <div class="dr"><span class="k2">Dep.</span><span class="v">pip install pygame</span></div>
-          </div>
+          <div class="hl" style="margin-bottom:9px">model/ — puro Python. <strong>Sem Pygame.</strong> Dados e lógica isolados da UI.</div>
+          <div class="hl" style="margin-bottom:9px">algorithms/ — recebem um Problem, devolvem um dict. <strong>Stateless e independentes.</strong></div>
+          <div class="hl" style="margin-bottom:9px">ui/ — usa o modelo e os algoritmos mas não conhece os seus detalhes internos.</div>
+          <div class="hl">metrics/ — agnóstico à UI. Funciona em <strong>modo terminal</strong> e em GUI.</div>
         </div>
       </div>
     </div>
 
-    <!-- S11 INTERFACE ───────────────────────── -->
+    <!-- S11 INTERFACE GRÁFICA ───────────────── -->
     <div class="step" id="s11" data-x="0" data-y="1720" data-rz="0" data-s="1">
       <div class="ey">[10] INTERFACE GRÁFICA — PYGAME</div>
-      <div class="st">Layout e Funcionalidades</div>
+      <div class="st">Layout e Modos de Edição</div>
       <div class="g2">
         <div>
-          <div class="cb" style="margin-bottom:11px;font-size:10.5px">┌─────────────────────────────────────┐
-│ Barra menus (Ficheiro | Ajuda)      │
-│ Título: Navegação de Personagem...  │
-├──────────────┬──────────────────────┤
-│Grelha│Análise     Painel controlo   │
-│                                     │
-│  [Área 2D]     [Botões + Tabela]    │
-│  Separador arrastável ↔             │
-└─────────────────────────────────────┘</div>
-          <div class="card">
-            <div class="ct"><span class="br">[ATALHOS]</span>TECLADO</div>
-            <div class="dr"><span class="k2">Ctrl+S</span><span class="v">Guardar mapa JSON</span></div>
-            <div class="dr"><span class="k2">Ctrl+O</span><span class="v">Carregar mapa JSON</span></div>
-            <div class="dr"><span class="k2">Esc</span><span class="v">Fechar menus / sair</span></div>
-          </div>
+          <div class="cb">┌──────────────────────────────────────┐
+│ Barra de menus (Ficheiro | Ajuda)    │
+├───────────────┬──────────────────────┤
+│ Grelha│Análise│   Painel de controlo │
+│               │                      │
+│ [Área grelha] │ [Botões + Tabela]    │
+│               │                      │
+│ ←─── Separador arrastável ───→       │
+└──────────────────────────────────────┘</div>
+          <div class="dr" style="margin-top:9px"><span class="k2">Janela</span><span class="v lm">1060×730 (redimensionável)</span></div>
+          <div class="dr"><span class="k2">Tabs</span><span class="v lm">Grelha + Análise</span></div>
+          <div class="dr"><span class="k2">Separador</span><span class="v lm">Arrastável horizontalmente</span></div>
         </div>
-        <div>
-          <div class="card" style="margin-bottom:9px">
-            <div class="ct"><span class="br">[MODOS DE EDIÇÃO]</span>TAB GRELHA</div>
-            <div class="dr"><span class="k2">S / G</span><span class="v lm">Início / Objetivo</span></div>
-            <div class="dr"><span class="k2">Obstáculo</span><span class="v fl">Intransponível</span></div>
-            <div class="dr"><span class="k2">Difícil</span><span class="v">Custo 3</span></div>
-            <div class="dr"><span class="k2">Armadilha</span><span class="v">Custo 5</span></div>
-            <div class="dr"><span class="k2">Inimigo</span><span class="v fl">Fatal na animação</span></div>
-          </div>
-          <div class="card">
-            <div class="ct"><span class="br">[TAB]</span>ANÁLISE</div>
-            <p style="font-size:12px;color:var(--meta);line-height:1.55">Tabela comparativa + gráficos de barras horizontais. Melhor valor marcado com ★ em lime.</p>
-          </div>
+        <div class="card">
+          <div class="ct"><span class="br">[EDIÇÃO]</span>MODOS DO MAPA</div>
+          <ul class="bl">
+            <li>Início (S) — define o ponto de partida</li>
+            <li>Objetivo (G) — define o ponto de chegada</li>
+            <li>Obstáculo — célula intransponível (∞)</li>
+            <li>Difícil — custo 3 por célula</li>
+            <li>Armadilha — custo 5 por célula</li>
+            <li>Inimigo — fatal na animação</li>
+            <li>Apagar — restaura para Livre</li>
+          </ul>
+          <div class="hl" style="margin-top:9px">Clicar e <strong>arrastar</strong> aplica o modo em múltiplas células. Botão direito abre menu de contexto.</div>
         </div>
       </div>
     </div>
 
-    <!-- S12 COMPARAÇÃO ──────────────────────── -->
-    <div class="step" id="s12" data-x="1200" data-y="1720" data-rz="3" data-s="1">
-      <div class="ey">[11] ANÁLISE COMPARATIVA</div>
+    <!-- S12 ANIMAÇÃO ────────────────────────── -->
+    <div class="step" id="s12" data-x="1200" data-y="1720" data-rz="-2" data-s="1">
+      <div class="ey">[11] VISUALIZAÇÃO E ANIMAÇÃO</div>
+      <div class="st">Animação Célula a Célula</div>
+      <div class="g2">
+        <div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Ao clicar "Animar Caminho", a aplicação reproduz a busca em dois momentos sequenciais:</p>
+          <ol class="sl">
+            <li>Células exploradas (azul/cinzento) — em lotes de 16 ms, mostrando a progressão da busca</li>
+            <li>Caminho final (verde/amarelo) — célula a célula com atraso proporcional ao terreno</li>
+          </ol>
+          <table class="tb" style="margin-top:11px">
+            <thead><tr><th>Terreno</th><th>Atraso</th><th>Custo</th></tr></thead>
+            <tbody>
+              <tr><td class="lm">Livre</td><td class="lm">100 ms</td><td class="lm">1</td></tr>
+              <tr><td class="lm">Difícil</td><td class="lm">350 ms</td><td class="lm">3</td></tr>
+              <tr><td class="fl">Armadilha</td><td class="fl">700 ms</td><td class="fl">5</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="card">
+            <div class="ct"><span class="br">[BOTÕES]</span>AÇÕES DISPONÍVEIS</div>
+            <div class="dr"><span class="k2">Executar</span><span class="v lm">Corre o algoritmo selecionado</span></div>
+            <div class="dr"><span class="k2">Executar Todos</span><span class="v lm">BFS + Greedy + A* em simultâneo</span></div>
+            <div class="dr"><span class="k2">Animar Caminho</span><span class="v lm">Reproduz exploração e caminho</span></div>
+            <div class="dr"><span class="k2">Limpar Caminho</span><span class="v mt">Remove resultado, mantém mapa</span></div>
+            <div class="dr"><span class="k2">Limpar Tudo</span><span class="v fl">Repõe o mapa ao estado inicial</span></div>
+          </div>
+          <div class="hl" style="margin-top:9px">Se o caminho passar por uma célula com <strong>Inimigo</strong>, a animação para e o personagem é marcado como "capturado".</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S13 TWO-PASS ────────────────────────── -->
+    <div class="step" id="s13" data-x="2400" data-y="1720" data-rz="0" data-s="1">
+      <div class="ey">[12] LÓGICA TWO-PASS</div>
+      <div class="st">Estratégia de Navegação com Inimigos</div>
+      <div class="g2">
+        <div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Quando existem inimigos no mapa, o programa usa uma estratégia em <strong style="color:var(--fg)">dois passos</strong> para maximizar as hipóteses de encontrar um caminho:</p>
+          <ol class="sl">
+            <li>Primeira tentativa: resolve com <code style="font-family:var(--fm);color:var(--lime)">avoid_enemies=True</code> — inimigos tratados como obstáculos</li>
+            <li>Se não há solução: resolve novamente com <code style="font-family:var(--fm);color:var(--lime)">avoid_enemies=False</code> — algoritmo passa pelos inimigos</li>
+          </ol>
+          <div class="fm2" style="margin-top:11px">avoid_enemies=True  → inimigos como obstáculos
+avoid_enemies=False → inimigos como custo normal</div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="ct"><span class="br">[RESULTADO]</span>COMPORTAMENTO NA ANIMAÇÃO</div>
+            <div class="dr"><span class="k2">Caminho livre</span><span class="v lm">Agente navega sem encontrar inimigos</span></div>
+            <div class="dr"><span class="k2">Caminho c/ inimigo</span><span class="v fl">Animação para — personagem "capturado"</span></div>
+            <div class="dr"><span class="k2">Sem solução (pass 1)</span><span class="v mt">Tenta novamente com inimigos passáveis</span></div>
+            <div class="dr"><span class="k2">Sem solução (pass 2)</span><span class="v fl">Reporta path: None</span></div>
+          </div>
+          <div class="hl" style="margin-top:9px">Permite que a animação mostre o personagem a chegar ao objetivo mesmo que o único caminho passe por <strong>inimigos</strong>, ativando o estado de capturado.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S14 JSON ────────────────────────────── -->
+    <div class="step" id="s14" data-x="3600" data-y="1720" data-rz="2" data-s="1">
+      <div class="ey">[13] PERSISTÊNCIA DE MAPAS</div>
+      <div class="st">Guardar e Carregar em JSON</div>
+      <div class="g2">
+        <div>
+          <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Os mapas são serializados em JSON com estrutura simples e portável:</p>
+          <div class="cb"><span class="k">{</span>
+  <span class="s">"rows"</span>:  15,
+  <span class="s">"cols"</span>:  18,
+  <span class="s">"cells"</span>: [[0, 1, 0, ...], ...],
+  <span class="s">"start"</span>: [2, 3],
+  <span class="s">"goal"</span>:  [12, 15]
+<span class="k">}</span></div>
+          <table class="tb" style="margin-top:9px">
+            <thead><tr><th>Campo</th><th>Tipo</th><th>Significado</th></tr></thead>
+            <tbody>
+              <tr><td>rows / cols</td><td>int</td><td class="lm">Dimensões da grelha</td></tr>
+              <tr><td>cells</td><td>int[][]</td><td class="lm">Matriz 2D dos tipos de célula</td></tr>
+              <tr><td>start / goal</td><td>[row,col]</td><td class="lm">Posições de início e objetivo</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="card">
+            <div class="ct"><span class="br">[ATALHOS]</span>TECLADO</div>
+            <div class="dr"><span class="k2">Ctrl+S</span><span class="v lm">Guardar mapa em ficheiro JSON</span></div>
+            <div class="dr"><span class="k2">Ctrl+O</span><span class="v lm">Carregar mapa de ficheiro JSON</span></div>
+            <div class="dr"><span class="k2">Esc</span><span class="v mt">Fechar menus e diálogos</span></div>
+          </div>
+          <div class="hl" style="margin-top:9px">No macOS, o diálogo de ficheiro abre via <strong>tkinter num subprocess</strong> separado para evitar conflitos com o loop de eventos do Pygame.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S15 ANÁLISE COMPARATIVA ─────────────── -->
+    <div class="step" id="s15" data-x="4800" data-y="1720" data-rz="0" data-s="1">
+      <div class="ey">[14] ANÁLISE COMPARATIVA</div>
       <div class="st">Comportamento por Cenário</div>
       <table class="tb" style="margin-bottom:11px">
         <thead><tr><th>Cenário</th><th>BFS</th><th>Greedy</th><th>A*</th></tr></thead>
         <tbody>
-          <tr><td>Mapa simples</td><td>Ótimo em passos</td><td>Rápido</td><td class="lm">Ótimo em custo</td></tr>
-          <tr><td>Terrenos variados</td><td class="fl">Ignora custos</td><td class="fl">Pode errar</td><td class="lm">Escolhe mais barato</td></tr>
-          <tr><td>Labirinto</td><td>Explora muito</td><td class="fl">Pode falhar</td><td class="lm">Eficiente e correto</td></tr>
-          <tr><td>Sem solução</td><td class="fl">Expande tudo</td><td>Expande menos</td><td class="lm">Mais eficiente</td></tr>
+          <tr>
+            <td>Mapa simples</td>
+            <td class="lm">Ótimo em passos; custo pode não ser mínimo</td>
+            <td class="lm">Rápido, poucas expansões</td>
+            <td class="lm">Ótimo em custo</td>
+          </tr>
+          <tr>
+            <td>Terreno variado</td>
+            <td class="fl">Ignora custos — caminho errado</td>
+            <td class="fl">Pode escolher caminho mais caro</td>
+            <td class="lm">Escolhe sempre o mais barato</td>
+          </tr>
+          <tr>
+            <td>Labirinto complexo</td>
+            <td class="fl">Explora muitas células</td>
+            <td class="fl">Pode falhar em becos</td>
+            <td class="lm">Eficiente e correto</td>
+          </tr>
+          <tr>
+            <td>Sem solução</td>
+            <td class="mt">Expande tudo; reporta None</td>
+            <td class="mt">Expande menos; reporta None</td>
+            <td class="lm">Expande menos que BFS; reporta None</td>
+          </tr>
         </tbody>
       </table>
-      <div class="g3">
-        <div class="hl"><strong>BFS vs A*:</strong><br>BFS garante menos passos. A* garante menor custo.</div>
-        <div class="hl"><strong>Greedy vs A*:</strong><br>Greedy mais rápido mas não ótimo. A* encontra sempre o menor custo.</div>
-        <div class="hl"><strong>Nós expandidos:</strong><br>BFS expande mais nós que A* por não ter heurística.</div>
+      <div class="g2">
+        <div class="hl">BFS vs A*: BFS garante <strong>menor nº de passos</strong>; A* garante <strong>menor custo</strong>. Quando todos os terrenos têm custo igual, ambos coincidem.</div>
+        <div class="hl">Greedy vs A*: Greedy é <strong>mais rápido</strong> (menos nós) mas não é ótimo. A* é <strong>sempre ótimo</strong> com h admissível.</div>
       </div>
     </div>
 
-    <!-- S13 CASOS DE TESTE ──────────────────── -->
-    <div class="step" id="s13" data-x="2400" data-y="1720" data-rz="0" data-s="1">
-      <div class="ey">[12] CASOS DE TESTE — MODO TERMINAL</div>
+    <!-- S16 CASOS DE TESTE ──────────────────── -->
+    <div class="step" id="s16" data-x="0" data-y="2580" data-rz="0" data-s="1">
+      <div class="ey">[15] CASOS DE TESTE — MODO TERMINAL</div>
       <div class="st">python main.py --test</div>
+      <p style="font-size:12px;color:var(--meta);margin-bottom:11px;line-height:1.55">Corre automaticamente 4 cenários e imprime uma tabela ASCII de métricas por caso:</p>
       <table class="tb" style="margin-bottom:11px">
-        <thead><tr><th>Caso</th><th>Descrição</th><th>O que testa</th></tr></thead>
+        <thead><tr><th>Caso</th><th>Mapa</th><th>Descrição</th></tr></thead>
         <tbody>
-          <tr><td class="lm">01</td><td>5×5 sem obstáculos, (0,0)→(4,4)</td><td>Caso base — todos encontram caminho</td></tr>
-          <tr><td class="lm">02</td><td>10×10 com obstáculos, (0,0)→(9,9)</td><td>Contornar obstáculos</td></tr>
-          <tr><td class="fl">03</td><td>5×5 coluna completamente bloqueada</td><td>Sem solução — todos retornam None</td></tr>
-          <tr><td class="lm">04</td><td>8×8 terreno difícil + armadilha</td><td>Impacto dos custos de terreno</td></tr>
+          <tr><td class="lm">01</td><td>5×5 sem obstáculos, (0,0)→(4,4)</td><td>Caso base — todos os algoritmos encontram caminho</td></tr>
+          <tr><td class="lm">02</td><td>10×10 com vários obstáculos, (0,0)→(9,9)</td><td>Capacidade de contornar obstáculos</td></tr>
+          <tr><td class="fl">03</td><td>5×5 com coluna completamente bloqueada</td><td class="fl">Cenário sem solução — todos retornam None</td></tr>
+          <tr><td class="lm">04</td><td>8×8 com terreno difícil e armadilha</td><td>Impacto dos custos de terreno nas métricas</td></tr>
         </tbody>
       </table>
-      <div class="g2">
-        <div class="hl"><strong>Terminal:</strong> Tabela ASCII por caso com custo, nós expandidos, passos e tempo.</div>
-        <div class="hl"><strong>GUI:</strong> Clicar "Executar Todos" → tab <strong>"Análise"</strong> para gráficos e tabela.</div>
-      </div>
+      <div class="hl" style="margin-bottom:11px">Métricas recolhidas: <strong>custo total, nós expandidos, passos do caminho, tempo de computação (ms)</strong> e tempo de viagem estimado (s).</div>
+      <div class="cb">python main.py          <span class="cm"># Abre janela Pygame</span>
+python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span></div>
     </div>
 
-    <!-- S14 TECNOLOGIAS ─────────────────────── -->
-    <div class="step" id="s14" data-x="3600" data-y="1720" data-rz="0" data-s="1">
-      <div class="ey">[13] TECNOLOGIAS E DEPENDÊNCIAS</div>
-      <div class="st">Stack do Projeto</div>
+    <!-- S17 FAQ DEFESA ──────────────────────── -->
+    <div class="step" id="s17" data-x="1200" data-y="2580" data-rz="-2" data-s="1">
+      <div class="ey">[16] PERGUNTAS FREQUENTES — DEFESA</div>
+      <div class="st">FAQ — Respostas-Chave</div>
       <div class="g2">
-        <table class="tb">
-          <thead><tr><th>Tecnologia</th><th>Uso</th></tr></thead>
-          <tbody>
-            <tr><td class="lm">Python 3.10+</td><td>Linguagem principal</td></tr>
-            <tr><td class="lm">Pygame</td><td>Janela gráfica, renderização</td></tr>
-            <tr><td class="lm">collections.deque</td><td>Fila FIFO para BFS</td></tr>
-            <tr><td class="lm">heapq</td><td>Fila de prioridade Greedy/A*</td></tr>
-            <tr><td class="lm">json</td><td>Serialização dos mapas</td></tr>
-            <tr><td class="lm">tkinter (subprocess)</td><td>Diálogo ficheiro macOS</td></tr>
-            <tr><td class="lm">time.perf_counter</td><td>Medição precisa do tempo</td></tr>
-          </tbody>
-        </table>
         <div>
-          <div class="card" style="margin-bottom:9px">
-            <div class="ct"><span class="br">[PALETA]</span>AIOX DARK COCKPIT</div>
-            <div class="dr"><span class="k2">Canvas</span><span class="v lm">#050505</span></div>
-            <div class="dr"><span class="k2">Surface</span><span class="v">#0F0F11</span></div>
-            <div class="dr"><span class="k2">Cream fg</span><span class="v">#F4F4E8</span></div>
-            <div class="dr"><span class="k2">Lime accent</span><span class="v lm">#D1FF00</span></div>
-            <div class="dr"><span class="k2">Flare error</span><span class="v fl">#ED4609</span></div>
+          <div class="card" style="margin-bottom:10px">
+            <div class="ct"><span class="br">[P1]</span>POR QUE É QUE A* É ÓTIMO E GREEDY NÃO?</div>
+            <p style="font-size:12px;color:var(--meta);line-height:1.55">A* usa g(n)+h(n) — considera o custo já percorrido. Greedy usa só h(n) e pode escolher um caminho "perto" que afinal é mais caro.</p>
           </div>
-          <div class="hl"><strong>Zero dependências de IA externa.</strong> Todos os algoritmos implementados manualmente em Python puro.</div>
+          <div class="card">
+            <div class="ct"><span class="br">[P2]</span>O QUE É UMA HEURÍSTICA ADMISSÍVEL?</div>
+            <p style="font-size:12px;color:var(--meta);line-height:1.55">Uma que nunca sobrestima o custo real. Manhattan é admissível porque assume custo mínimo 1 por passo — igual ao custo de uma célula Livre.</p>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:10px">
+            <div class="ct"><span class="br">[P3]</span>POR QUE É QUE BFS NÃO É ÓTIMO EM CUSTO?</div>
+            <p style="font-size:12px;color:var(--meta);line-height:1.55">Trata todos os passos como iguais (custo 1). Encontra o caminho com menos células, não o mais barato em terreno.</p>
+          </div>
+          <div class="card">
+            <div class="ct"><span class="br">[P4]</span>O QUE ACONTECE QUANDO h(n)=0?</div>
+            <p style="font-size:12px;color:var(--meta);line-height:1.55">A* degenera em Dijkstra — expande por custo real g(n). Ainda ótimo mas mais lento. Manhattan é preferível por ser mais informativa.</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- S15 RESUMO ──────────────────────────── -->
-    <div class="step" id="s15" data-x="1800" data-y="2720" data-rz="0" data-s="1.06">
+    <!-- S18 ENCERRAMENTO ────────────────────── -->
+    <div class="step" id="s18" data-x="2400" data-y="2580" data-rz="0" data-s="1.06">
       <div class="bgw">FIM</div>
-      <div class="ey">[14] RESUMO PARA O RELATÓRIO</div>
-      <div class="st">Estrutura do Relatório Académico</div>
+      <div class="ey">[FIM] RESUMO DO TRABALHO</div>
+      <div class="st">App_Navegacao — Pontos-Chave</div>
       <div class="g3">
-        <div class="card"><div class="ct"><span class="br">[01]</span>INTRODUÇÃO</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Objetivo do trabalho, algoritmos escolhidos e motivação.</p></div>
-        <div class="card"><div class="ct"><span class="br">[02]</span>FUNDAMENTAÇÃO</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Busca em espaço de estados, informada vs. não informada, pseudocódigo.</p></div>
-        <div class="card"><div class="ct"><span class="br">[03]</span>MODELAÇÃO</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Grelha, estados hashável, tipos de célula e custos de terreno.</p></div>
-        <div class="card"><div class="ct"><span class="br">[04]</span>IMPLEMENTAÇÃO</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Arquitetura, separação modelo/UI, contrato dos algoritmos, two-pass.</p></div>
-        <div class="card"><div class="ct"><span class="br">[05]</span>RESULTADOS</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Tabela de métricas dos 4 casos de teste e análise dos gráficos.</p></div>
-        <div class="card"><div class="ct"><span class="br">[06]</span>CONCLUSÃO</div><p style="font-size:12px;color:var(--meta);line-height:1.55">Melhor algoritmo para cada cenário — tradeoffs BFS vs Greedy vs A*.</p></div>
+        <div class="card">
+          <div class="ct"><span class="br">[BFS]</span>BUSCA EM LARGURA</div>
+          <p style="font-size:12px;color:var(--meta);line-height:1.55">Completo. Ótimo em passos. Não informado. FIFO. Ignora custos de terreno.</p>
+        </div>
+        <div class="card">
+          <div class="ct"><span class="br">[GRD]</span>GREEDY BEST-FIRST</div>
+          <p style="font-size:12px;color:var(--meta);line-height:1.55">Rápido. Informado. f=h(n). Não garante custo mínimo. heapq.</p>
+        </div>
+        <div class="card">
+          <div class="ct"><span class="br">[A*]</span>A-ESTRELA</div>
+          <p style="font-size:12px;color:var(--meta);line-height:1.55">Ótimo e completo. f=g+h. Heurística admissível essencial. heapq.</p>
+        </div>
+        <div class="card">
+          <div class="ct"><span class="br">[MODEL]</span>MODELAÇÃO FORMAL</div>
+          <p style="font-size:12px;color:var(--meta);line-height:1.55">State(row,col) hashável. Grid 2D. Problem com 4 operações. 5 tipos de célula.</p>
+        </div>
+        <div class="card">
+          <div class="ct"><span class="br">[UI]</span>INTERFACE PYGAME</div>
+          <p style="font-size:12px;color:var(--meta);line-height:1.55">Edição de mapa, animação, comparação de métricas, persistência JSON.</p>
+        </div>
+        <div class="card">
+          <div class="ct"><span class="br">[ARCH]</span>ARQUITETURA LIMPA</div>
+          <p style="font-size:12px;color:var(--meta);line-height:1.55">model/ sem Pygame. algorithms/ stateless. ui/ isolada. metrics/ agnóstica.</p>
+        </div>
       </div>
     </div>
 
@@ -587,7 +742,7 @@ body.overview #hint-overview{display:flex}
 
 <!-- HUD -->
 <div id="hud">
-  <span>[<span class="cur" id="hcur">01</span>&nbsp;/&nbsp;<span id="htot">15</span>]</span>
+  <span>[<span class="cur" id="hcur">01</span>&nbsp;/&nbsp;<span id="htot">18</span>]</span>
   <div id="pw"><div id="pb"><div id="pf"></div></div></div>
   <div id="hint">
     <!-- modo normal -->
@@ -624,7 +779,7 @@ body.overview #hint-overview{display:flex}
 <script>
 (function () {
   /* ── Config ───────────────────────────────── */
-  const W = 1000, H = 680, PERSP = 1500, TOTAL = 15;
+  const W = 1000, H = 680, PERSP = 1500, TOTAL = 18;
   let cur = 0, inOverview = false, hovIdx = -1;
 
   const cvs    = document.getElementById('canvas');
@@ -801,7 +956,7 @@ body.overview #hint-overview{display:flex}
     inOverview = true;
     document.body.classList.add('overview');
     cvs.style.transition = 'transform 850ms cubic-bezier(.33,0,.67,1)';
-    /* fit the entire 5×3 grid: x spans 0..5800, y spans 0..3400 */
+    /* fit the entire 5×4 grid: x spans 0..5800, y spans 0..3400 */
     const sc = Math.min(
       window.innerWidth         / 6600,
       (window.innerHeight - 52) / 4200
@@ -935,39 +1090,28 @@ body.overview #hint-overview{display:flex}
 
 <script>
 /* ── 3D tilt para .step — visão geral ───────── */
-/* Abordagem: wrapper interno isola a perspetiva do tilt
-   sem tocar no transform de posicionamento do step.
-   O step nunca muda — getBoundingClientRect() fica alinhado
-   com o outline desenhado pelo canvas. */
 (function(){
   const LERP_S=0.11, MAX_S=10;
   const stepItems=[];
 
   function makeStep(el){
-    /* Lê padding do step antes de o remover */
     const cs=getComputedStyle(el);
     const pt=cs.paddingTop, pr=cs.paddingRight,
           pb=cs.paddingBottom, pl=cs.paddingLeft;
 
-    /* wrap: viewport de perspetiva local (transform-style:flat por padrão
-       → isola do contexto 3D da cena; sem 3D transform próprio
-       → bounding rect do step mantém-se inalterado) */
     const wrap=document.createElement('div');
     wrap.style.cssText='position:absolute;inset:0;z-index:1;'
       +'perspective:800px;perspective-origin:50% 50%';
 
-    /* tl: camada de tilt — recebe rotateX/Y */
     const tl=document.createElement('div');
     tl.style.cssText='position:absolute;inset:0;transform-origin:50% 50%;'
       +'padding:'+pt+' '+pr+' '+pb+' '+pl+';box-sizing:border-box';
 
-    /* Move todo o conteúdo do step para tl */
     while(el.firstChild) tl.appendChild(el.firstChild);
     wrap.appendChild(tl);
     el.appendChild(wrap);
-    el.style.padding='0'; /* padding migrado para tl */
+    el.style.padding='0';
 
-    /* Glare lime dentro de tl */
     const g=document.createElement('div');
     g.style.cssText='position:absolute;inset:0;pointer-events:none;'
       +'z-index:50;opacity:0;transition:opacity .25s';
