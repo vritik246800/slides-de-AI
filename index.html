@@ -208,9 +208,9 @@ body.overview #hint-overview{display:flex}
           <div style="font-family:var(--fm);font-size:9px;font-weight:600;letter-spacing:.20em;text-transform:uppercase;color:var(--lime);margin-bottom:4px">GRUPO 5 · INTELIGÊNCIA ARTIFICIAL</div>
           <div class="card" style="padding:14px 16px">
             <div style="display:flex;flex-direction:column;gap:0">
+              <div class="dr"><span class="k2">20190025</span><span class="v lm" style="font-size:11.5px">Vritik Valabdas</span></div>
               <div class="dr"><span class="k2">20190461</span><span class="v" style="font-size:11.5px">Shuraim Hussene Ishakgi</span></div>
               <div class="dr"><span class="k2">20240187</span><span class="v" style="font-size:11.5px">Saymara Chambal</span></div>
-              <div class="dr"><span class="k2">20190025</span><span class="v lm" style="font-size:11.5px">Vritik Valabdas</span></div>
               <div class="dr"><span class="k2">20200039</span><span class="v" style="font-size:11.5px">Martin Daud Ribeiro</span></div>
               <div class="dr"><span class="k2">20230471</span><span class="v" style="font-size:11.5px">Rahissa Mahomed Al Yashin</span></div>
               <div class="dr"><span class="k2">20200612</span><span class="v" style="font-size:11.5px">Shelton Arlindo</span></div>
@@ -738,7 +738,7 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
           </div>
         </div>
         <!-- QR CODE -->
-        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px;background:var(--card);border:1px solid var(--b);border-left:3px solid var(--lime);flex-shrink:0">
+        <div id="qr-section" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px;background:var(--card);border:1px solid var(--b);border-left:3px solid var(--lime);flex-shrink:0;cursor:zoom-in;transition:border-color .2s,box-shadow .2s">
           <div style="font-family:var(--fm);font-size:8px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--lime);text-align:center">CÓDIGO FONTE</div>
           <div id="qr-github" style="padding:8px;background:#050505;display:flex;align-items:center;justify-content:center"></div>
           <div style="font-family:var(--fm);font-size:8px;color:var(--meta);letter-spacing:.08em;text-align:center;max-width:130px;line-height:1.5">github.com/<br>vritik246800/<br>slides-de-AI</div>
@@ -789,7 +789,7 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
 (function () {
   /* ── Config ───────────────────────────────── */
   const W = 1000, H = 680, PERSP = 1500, TOTAL = 18;
-  let cur = 0, inOverview = false, hovIdx = -1;
+  let cur = 0, inOverview = false, hovIdx = -1, inQRZoom = false;
 
   const cvs    = document.getElementById('canvas');
   const fx     = document.getElementById('fx');
@@ -917,18 +917,22 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
       const r    = el.getBoundingClientRect();
       const pulse = .4 + .25 * Math.sin(t * 1.3);
 
-      /* subtle bg radial glow */
-      const cx  = r.left + r.width  / 2;
-      const cy  = r.top  + r.height / 2;
-      const rad = Math.max(r.width, r.height) * .65;
-      const bg  = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
-      bg.addColorStop(0, `rgba(209,255,0,${pulse * .05})`);
-      bg.addColorStop(1, 'rgba(209,255,0,0)');
-      ctx.fillStyle = bg;
-      ctx.fillRect(r.left - 90, r.top - 90, r.width + 180, r.height + 180);
-
-      /* corner brackets */
-      drawCorners(r, pulse * .75);
+      if (inQRZoom) {
+        /* corner brackets around the QR code while zoomed in */
+        const qrEl = document.getElementById('qr-github');
+        if (qrEl) drawCorners(qrEl.getBoundingClientRect(), pulse * .75);
+      } else {
+        /* subtle bg radial glow */
+        const cx  = r.left + r.width  / 2;
+        const cy  = r.top  + r.height / 2;
+        const rad = Math.max(r.width, r.height) * .65;
+        const bg  = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
+        bg.addColorStop(0, `rgba(209,255,0,${pulse * .05})`);
+        bg.addColorStop(1, 'rgba(209,255,0,0)');
+        ctx.fillStyle = bg;
+        ctx.fillRect(r.left - 90, r.top - 90, r.width + 180, r.height + 180);
+        drawCorners(r, pulse * .75);
+      }
     }
 
     requestAnimationFrame(draw);
@@ -938,6 +942,7 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
   function goTo (idx, animate) {
     if (idx < 0 || idx >= TOTAL) return;
     inOverview = false;
+    inQRZoom = false;
     document.body.classList.remove('overview');
     hovIdx = -1;
 
@@ -978,6 +983,36 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
     if (inOverview) goTo(cur, true); else enterOverview();
   }
 
+  function enterQRZoom () {
+    const qrEl = document.getElementById('qr-github');
+    if (!qrEl) return;
+    const rect = qrEl.getBoundingClientRect();
+    const vpW  = window.innerWidth;
+    const vpH  = window.innerHeight - 52;
+    const sc   = winScale(+(steps[TOTAL - 1].dataset.s || 1));
+    /* canvas coords of QR center: invert current slide-18 transform */
+    const s18el = steps[TOTAL - 1];
+    const cx18  = +(s18el.dataset.x || 0);
+    const cy18  = +(s18el.dataset.y || 0);
+    const qrCanvasX = cx18 + (rect.left + rect.width  / 2 - vpW / 2) / sc;
+    const qrCanvasY = cy18 + (rect.top  + rect.height / 2 - vpH / 2) / sc;
+    /* zoom so QR fills ~55% of the smaller viewport dimension */
+    const qrPx  = Math.max(rect.width, rect.height);
+    const newSc = sc * (Math.min(vpW, vpH) * 0.55 / qrPx);
+    inQRZoom = true;
+    const qrSec = document.getElementById('qr-section');
+    if (qrSec) { qrSec.style.cursor = 'zoom-out'; qrSec.style.boxShadow = '0 0 0 1px rgba(209,255,0,.35)'; }
+    cvs.style.transition = 'transform 850ms cubic-bezier(.33,0,.67,1)';
+    cvs.style.transform  = `perspective(${PERSP}px) scale(${newSc}) translate3d(${-qrCanvasX}px,${-qrCanvasY}px,0)`;
+  }
+
+  function exitQRZoom () {
+    if (!inQRZoom) return;
+    const qrSec = document.getElementById('qr-section');
+    if (qrSec) { qrSec.style.cursor = 'zoom-in'; qrSec.style.boxShadow = ''; }
+    goTo(cur, true);
+  }
+
   /* ── HUD ─────────────────────────────────── */
   function updateHUD () {
     document.getElementById('hcur').textContent = String(cur + 1).padStart(2, '0');
@@ -986,6 +1021,8 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
 
   /* ── Keyboard ────────────────────────────── */
   document.addEventListener('keydown', e => {
+    /* in QR zoom: any key exits */
+    if (inQRZoom) { e.preventDefault(); exitQRZoom(); return; }
     /* in overview: any nav key exits */
     if (inOverview) {
       if (['Tab','Escape','o','O',' '].includes(e.key)) {
@@ -1012,6 +1049,24 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
     /* click in overview → navigate to that slide */
     el.addEventListener('click', () => { if (inOverview) goTo(i, true); });
   });
+
+  /* ── QR code zoom ────────────────────────── */
+  const qrSection = document.getElementById('qr-section');
+  if (qrSection) {
+    qrSection.addEventListener('mouseenter', () => {
+      if (!inQRZoom) qrSection.style.borderColor = 'rgba(209,255,0,.45)';
+    });
+    qrSection.addEventListener('mouseleave', () => {
+      if (!inQRZoom) qrSection.style.borderColor = '';
+    });
+    qrSection.addEventListener('click', e => {
+      if (inOverview) return;
+      e.stopPropagation();
+      if (inQRZoom) exitQRZoom(); else enterQRZoom();
+    });
+  }
+  /* click anywhere outside QR section while zoomed → exit */
+  document.addEventListener('click', () => { if (inQRZoom) exitQRZoom(); });
 
   /* ── Touch swipe ─────────────────────────── */
   let tx = 0;

@@ -17,9 +17,9 @@ O utilizador pode desenhar o mapa (obstáculos, terrenos difíceis, armadilhas e
 
 | Número | Nome |
 |---|---|
+| 20190025 | Vritik Valabdas |
 | 20190461 | Shuraim Hussene Ishakgi |
 | 20240187 | Saymara Chambal |
-| 20190025 | Vritik Valabdas |
 | 20200039 | Martin Daud Ribeiro |
 | 20230471 | Rahissa Mahomed Al Yashin |
 | 20200612 | Shelton Arlindo |
