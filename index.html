@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>App_Navegacao — Inteligência Artificial</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root {
   --bg:   #050505; --fg:   #F4F4E8; --card: #0F0F11; --panel:#111113;
@@ -709,30 +710,38 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
       <div class="bgw">FIM</div>
       <div class="ey">[FIM] RESUMO DO TRABALHO</div>
       <div class="st">App_Navegacao — Pontos-Chave</div>
-      <div class="g3">
-        <div class="card">
-          <div class="ct"><span class="br">[BFS]</span>BUSCA EM LARGURA</div>
-          <p style="font-size:12px;color:var(--meta);line-height:1.55">Completo. Ótimo em passos. Não informado. FIFO. Ignora custos de terreno.</p>
+      <div style="display:grid;grid-template-columns:1fr auto;gap:18px;align-items:start">
+        <div class="g3">
+          <div class="card">
+            <div class="ct"><span class="br">[BFS]</span>BUSCA EM LARGURA</div>
+            <p style="font-size:12px;color:var(--meta);line-height:1.55">Completo. Ótimo em passos. Não informado. FIFO. Ignora custos de terreno.</p>
+          </div>
+          <div class="card">
+            <div class="ct"><span class="br">[GRD]</span>GREEDY BEST-FIRST</div>
+            <p style="font-size:12px;color:var(--meta);line-height:1.55">Rápido. Informado. f=h(n). Não garante custo mínimo. heapq.</p>
+          </div>
+          <div class="card">
+            <div class="ct"><span class="br">[A*]</span>A-ESTRELA</div>
+            <p style="font-size:12px;color:var(--meta);line-height:1.55">Ótimo e completo. f=g+h. Heurística admissível essencial. heapq.</p>
+          </div>
+          <div class="card">
+            <div class="ct"><span class="br">[MODEL]</span>MODELAÇÃO FORMAL</div>
+            <p style="font-size:12px;color:var(--meta);line-height:1.55">State(row,col) hashável. Grid 2D. Problem com 4 operações. 5 tipos de célula.</p>
+          </div>
+          <div class="card">
+            <div class="ct"><span class="br">[UI]</span>INTERFACE PYGAME</div>
+            <p style="font-size:12px;color:var(--meta);line-height:1.55">Edição de mapa, animação, comparação de métricas, persistência JSON.</p>
+          </div>
+          <div class="card">
+            <div class="ct"><span class="br">[ARCH]</span>ARQUITETURA LIMPA</div>
+            <p style="font-size:12px;color:var(--meta);line-height:1.55">model/ sem Pygame. algorithms/ stateless. ui/ isolada. metrics/ agnóstica.</p>
+          </div>
         </div>
-        <div class="card">
-          <div class="ct"><span class="br">[GRD]</span>GREEDY BEST-FIRST</div>
-          <p style="font-size:12px;color:var(--meta);line-height:1.55">Rápido. Informado. f=h(n). Não garante custo mínimo. heapq.</p>
-        </div>
-        <div class="card">
-          <div class="ct"><span class="br">[A*]</span>A-ESTRELA</div>
-          <p style="font-size:12px;color:var(--meta);line-height:1.55">Ótimo e completo. f=g+h. Heurística admissível essencial. heapq.</p>
-        </div>
-        <div class="card">
-          <div class="ct"><span class="br">[MODEL]</span>MODELAÇÃO FORMAL</div>
-          <p style="font-size:12px;color:var(--meta);line-height:1.55">State(row,col) hashável. Grid 2D. Problem com 4 operações. 5 tipos de célula.</p>
-        </div>
-        <div class="card">
-          <div class="ct"><span class="br">[UI]</span>INTERFACE PYGAME</div>
-          <p style="font-size:12px;color:var(--meta);line-height:1.55">Edição de mapa, animação, comparação de métricas, persistência JSON.</p>
-        </div>
-        <div class="card">
-          <div class="ct"><span class="br">[ARCH]</span>ARQUITETURA LIMPA</div>
-          <p style="font-size:12px;color:var(--meta);line-height:1.55">model/ sem Pygame. algorithms/ stateless. ui/ isolada. metrics/ agnóstica.</p>
+        <!-- QR CODE -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px;background:var(--card);border:1px solid var(--b);border-left:3px solid var(--lime);flex-shrink:0">
+          <div style="font-family:var(--fm);font-size:8px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--lime);text-align:center">CÓDIGO FONTE</div>
+          <div id="qr-github" style="padding:8px;background:#050505;display:flex;align-items:center;justify-content:center"></div>
+          <div style="font-family:var(--fm);font-size:8px;color:var(--meta);letter-spacing:.08em;text-align:center;max-width:130px;line-height:1.5">github.com/<br>vritik246800/<br>slides-de-AI</div>
         </div>
       </div>
     </div>
@@ -1161,6 +1170,22 @@ python main.py --test   <span class="cm"># Corre 4 cenários em terminal</span><
       stepItems.forEach(d=>{ d.tx=0; d.ty=0; d.el.style.outline=''; });
     }
   }).observe(document.body,{attributes:true,attributeFilter:['class']});
+})();
+</script>
+
+<script>
+/* ── QR Code — último slide ─────────────────── */
+(function(){
+  var el = document.getElementById('qr-github');
+  if (!el || typeof QRCode === 'undefined') return;
+  new QRCode(el, {
+    text: 'https://github.com/vritik246800/slides-de-AI',
+    width: 130,
+    height: 130,
+    colorDark: '#D1FF00',
+    colorLight: '#050505',
+    correctLevel: QRCode.CorrectLevel.H
+  });
 })();
 </script>
 </body>
